@@ -136,6 +136,11 @@
             <Form>frmPrincipal</Form>
             <FormType>fmx</FormType>
         </DCCReference>
+        <DCCReference Include="Servidor\DataModule\DataModule.Global.pas">
+            <Form>DmGlobal</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

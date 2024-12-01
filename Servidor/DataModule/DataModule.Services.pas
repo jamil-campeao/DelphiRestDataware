@@ -4,7 +4,7 @@ interface
 
 uses
   System.SysUtils, System.Classes, uRESTDWDatamodule, uRESTDWComponentBase,
-  uRESTDWServerEvents, uRESTDWParams, uRESTDWConsts;
+  uRESTDWServerEvents, uRESTDWParams, uRESTDWConsts, DataSet.Serialize.Config;
 
 type
   TDMServices = class(TServerMethodDataModule)
@@ -13,6 +13,7 @@ type
       var Params: TRESTDWParams; var Result: string;
       const RequestType: TRequestType; var StatusCode: Integer;
       RequestHeader: TStringList);
+    procedure ServerMethodDataModuleCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -34,6 +35,13 @@ procedure TDMServices.ServerEventsEventsusuariosReplyEventByType(
   RequestHeader: TStringList);
 begin
   Result := '{"retorno: "Usuário cadastrado com sucesso"}';
+end;
+
+procedure TDMServices.ServerMethodDataModuleCreate(Sender: TObject);
+begin
+  TDataSetSerializeConfig.GetInstance.CaseNameDefinition := cndLower;
+  TDataSetSerializeConfig.GetInstance.Import.DecimalSeparator := '.';
+
 end;
 
 end.

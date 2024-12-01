@@ -1,4 +1,5 @@
 object DMServices: TDMServices
+  OnCreate = ServerMethodDataModuleCreate
   Encoding = esUtf8
   QueuedRequest = False
   Height = 292
