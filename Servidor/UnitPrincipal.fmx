@@ -54,7 +54,7 @@ object frmPrincipal: TfrmPrincipal
     SSLVerifyDepth = 0
     SSLMode = sslmUnassigned
     SSLMethod = sslvSSLv2
-    Left = 96
-    Top = 296
+    Left = 48
+    Top = 168
   end
 end
