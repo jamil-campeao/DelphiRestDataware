@@ -26,6 +26,7 @@ type
     function fEditarUsuario(pCodUsuario: Integer; pNome,
       pEmail: String): TJSonObject;
     function fEditarSenha(pCodUsuario: Integer; pSenha: String): TJSonObject;
+    function fListarNotificacoes(pCodUsuario: Integer): TJSonArray;
 
     { Public declarations }
   end;
@@ -304,6 +305,62 @@ begin
   end;
 
 end;
+
+function TDmGlobal.fListarNotificacoes(pCodUsuario: Integer): TJSonArray;
+var
+  vSQLQuery: TFDQuery;
+begin
+  {$REGION 'SELECT NOTIFICACOES'}
+  vSQLQuery := TFDQuery.Create(nil);
+  try
+    vSQLQuery.Connection := Conn;
+
+    vSQLQuery.Active := False;
+    vSQLQuery.SQL.Clear;
+
+    vSQLQuery.SQL.Text := ' SELECT                     ' +
+                          ' COD_NOTIFICACAO,           ' +
+                          ' DATA_NOTIFICACAO,          ' +
+                          ' TITULO,                    ' +
+                          ' TEXTO                      ' +
+                          ' FROM TAB_NOTIFICACAO       ' +
+                          ' WHERE                      ' +
+                          ' COD_USUARIO = :COD_USUARIO ' +
+                          ' AND IND_LIDO = :IND_LIDO   ';
+
+    vSQLQuery.ParamByName('COD_USUARIO').AsInteger := pCodUsuario;
+    vSQLQuery.ParamByName('IND_LIDO').AsString     := 'N';
+
+    vSQLQuery.Active := True;
+
+    Result := vSQLQuery.ToJSONArray;
+  {$ENDREGION}
+
+
+  {$REGION 'UPDATE NOTIFICACOES'}
+    //Marco as mensagens como Lidas
+    vSQLQuery.Active := False;
+    vSQLQuery.SQL.Clear;
+
+    vSQLQuery.SQL.Text := ' UPDATE TAB_NOTIFICACAO     ' +
+                          ' SET IND_LIDO = ''S''       ' +
+                          ' WHERE                      ' +
+                          ' COD_USUARIO = :COD_USUARIO ' +
+                          ' AND IND_LIDO = :IND_LIDO   ';
+
+    vSQLQuery.ParamByName('COD_USUARIO').AsInteger := pCodUsuario;
+    vSQLQuery.ParamByName('IND_LIDO').AsString     := 'N';
+
+    vSQLQuery.ExecSQL;
+  {$ENDREGION}
+
+  finally
+    FreeAndNil(vSQLQuery);
+
+  end;
+
+end;
+
 
 
 end.

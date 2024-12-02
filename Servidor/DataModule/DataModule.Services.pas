@@ -36,6 +36,10 @@ type
       var Params: TRESTDWParams; var Result: string;
       const RequestType: TRequestType; var StatusCode: Integer;
       RequestHeader: TStringList);
+    procedure ServerEventsEventsnotificacoesReplyEventByType(
+      var Params: TRESTDWParams; var Result: string;
+      const RequestType: TRequestType; var StatusCode: Integer;
+      RequestHeader: TStringList);
   private
     { Private declarations }
   public
@@ -49,7 +53,7 @@ implementation
 
 {%CLASSGROUP 'FMX.Controls.TControl'}
 
-uses Controllers.Usuario, Controllers.Auth;
+uses Controllers.Usuario, Controllers.Auth, Controllers.Notificacao;
 
 {$R *.dfm}
 
@@ -70,6 +74,16 @@ procedure TDMServices.ServerEventsEventsloginReplyEventByType(
 begin
   //POST: /USUARIOS/LOGIN
   Controllers.Usuario.RegistrarRotasLogin(Params, Result, RequestType, StatusCode, RequestHeader);
+end;
+
+procedure TDMServices.ServerEventsEventsnotificacoesReplyEventByType(
+  var Params: TRESTDWParams; var Result: string;
+  const RequestType: TRequestType; var StatusCode: Integer;
+  RequestHeader: TStringList);
+begin
+  //GET /NOTIFICACOES
+  Controllers.Notificacao.RegistrarRotas(Params, Result, RequestType, StatusCode, RequestHeader);
+
 end;
 
 procedure TDMServices.ServerEventsEventsperfilReplyEventByType(

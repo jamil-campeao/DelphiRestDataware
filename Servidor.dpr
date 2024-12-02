@@ -9,7 +9,8 @@ uses
   Controllers.Usuario in 'Controller\Controllers.Usuario.pas',
   uFunctions in 'Units\uFunctions.pas',
   Controllers.Auth in 'Controller\Controllers.Auth.pas',
-  uMD5 in 'Units\uMD5.pas';
+  uMD5 in 'Units\uMD5.pas',
+  Controllers.Notificacao in 'Controller\Controllers.Notificacao.pas';
 
 {$R *.res}
 
