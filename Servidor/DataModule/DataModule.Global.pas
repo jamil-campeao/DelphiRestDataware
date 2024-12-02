@@ -21,6 +21,7 @@ type
     { Private declarations }
   public
     function InserirUsuario(pNome, pEmail, pSenha: String): TJSonObject;
+    function Login(pEmail, pSenha: String): TJSonObject;
 
     { Public declarations }
   end;
@@ -110,6 +111,41 @@ begin
                           ' RETURNING COD_USUARIO   ';
 
     vSQLQuery.ParamByName('NOME').AsString  := pNome;
+    vSQLQuery.ParamByName('EMAIL').AsString := pEmail;
+    vSQLQuery.ParamByName('SENHA').AsString := pSenha;
+
+    vSQLQuery.Active := True;
+
+    Result := vSQLQuery.ToJsonObject;
+
+
+  finally
+    FreeAndNil(vSQLQuery);
+
+  end;
+
+end;
+
+function TDmGlobal.Login(pEmail, pSenha: String): TJSonObject;
+var
+  vSQLQuery: TFDQuery;
+begin
+  vSQLQuery := TFDQuery.Create(nil);
+  try
+    vSQLQuery.Connection := Conn;
+
+    vSQLQuery.Active := False;
+    vSQLQuery.SQL.Clear;
+
+    vSQLQuery.SQL.Text := ' SELECT                 ' +
+                          ' COD_USUARIO,           ' +
+                          ' NOME,                  ' +
+                          ' EMAIL                  ' +
+                          ' FROM TAB_USUARIO       ' +
+                          ' WHERE                  ' +
+                          ' EMAIL = :EMAIL         ' +
+                          ' AND SENHA = :SENHA     ';
+
     vSQLQuery.ParamByName('EMAIL').AsString := pEmail;
     vSQLQuery.ParamByName('SENHA').AsString := pSenha;
 

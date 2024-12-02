@@ -3,10 +3,23 @@ object DMServices: TDMServices
   Encoding = esUtf8
   QueuedRequest = False
   Height = 292
-  Width = 483
+  Width = 220
   object ServerEvents: TRESTDWServerEvents
     IgnoreInvalidParams = False
     Events = <
+      item
+        Routes = [crAll]
+        NeedAuthorization = False
+        Params = <>
+        DataMode = dmRAW
+        Name = 'login'
+        EventName = 'login'
+        BaseURL = '/usuarios/'
+        DefaultContentType = 'application/json'
+        CallbackEvent = False
+        OnlyPreDefinedParams = False
+        OnReplyEventByType = ServerEventsEventsloginReplyEventByType
+      end
       item
         Routes = [crAll]
         NeedAuthorization = False

@@ -265,6 +265,7 @@
         </DCCReference>
         <DCCReference Include="Controller\Controllers.Usuario.pas"/>
         <DCCReference Include="Units\uFunctions.pas"/>
+        <DCCReference Include="Controller\Controllers.Auth.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

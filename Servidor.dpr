@@ -7,7 +7,8 @@ uses
   UnitPrincipal in 'Servidor\UnitPrincipal.pas' {frmPrincipal},
   DataModule.Global in 'Servidor\DataModule\DataModule.Global.pas' {DmGlobal: TDataModule},
   Controllers.Usuario in 'Controller\Controllers.Usuario.pas',
-  uFunctions in 'Units\uFunctions.pas';
+  uFunctions in 'Units\uFunctions.pas',
+  Controllers.Auth in 'Controller\Controllers.Auth.pas';
 
 {$R *.res}
 
