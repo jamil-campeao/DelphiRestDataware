@@ -29,6 +29,9 @@ type
       var Params: TRESTDWParams; var Result: string;
       const RequestType: TRequestType; var StatusCode: Integer;
       RequestHeader: TStringList);
+    procedure ServerEventsEventssenhaReplyEventByType(var Params: TRESTDWParams;
+      var Result: string; const RequestType: TRequestType;
+      var StatusCode: Integer; RequestHeader: TStringList);
   private
     { Private declarations }
   public
@@ -72,6 +75,16 @@ procedure TDMServices.ServerEventsEventspushReplyEventByType(
 begin
   //POST /USUARIOS/PUSH
   Controllers.Usuario.RegistrarRotasPush(Params, Result, RequestType, StatusCode, RequestHeader);
+
+end;
+
+procedure TDMServices.ServerEventsEventssenhaReplyEventByType(
+  var Params: TRESTDWParams; var Result: string;
+  const RequestType: TRequestType; var StatusCode: Integer;
+  RequestHeader: TStringList);
+begin
+  //PUT /USUARIOS/SENHA
+  Controllers.Usuario.RegistrarRotasSenha(Params, Result, RequestType, StatusCode, RequestHeader);
 
 end;
 

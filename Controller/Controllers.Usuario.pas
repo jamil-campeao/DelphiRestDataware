@@ -38,6 +38,14 @@ procedure EditarUsuario(var Params: TRESTDWParams; var Result: string;
   const RequestType: TRequestType; var StatusCode: Integer;
   RequestHeader: TStringList);
 
+procedure RegistrarRotasSenha(var Params: TRESTDWParams; var Result: string;
+  const RequestType: TRequestType; var StatusCode: Integer;
+  RequestHeader: TStringList);
+
+procedure EditarSenha(var Params: TRESTDWParams; var Result: string;
+  const RequestType: TRequestType; var StatusCode: Integer;
+  RequestHeader: TStringList);
+
 implementation
 
 procedure RegistrarRotas(var Params: TRESTDWParams; var Result: string;
@@ -70,6 +78,15 @@ procedure RegistrarRotasPerfil(var Params: TRESTDWParams; var Result: string;
 begin
   if RequestType = rtPut then
     EditarUsuario(Params, Result, RequestType, StatusCode, RequestHeader);
+end;
+
+procedure RegistrarRotasSenha(var Params: TRESTDWParams; var Result: string;
+  const RequestType: TRequestType; var StatusCode: Integer;
+  RequestHeader: TStringList);
+begin
+  if RequestType = rtPut then
+    EditarSenha(Params, Result, RequestType, StatusCode, RequestHeader);
+
 end;
 
 procedure InserirUsuario(var Params: TRESTDWParams; var Result: string;
@@ -240,6 +257,46 @@ begin
 
   end;
 end;
+
+procedure EditarSenha(var Params: TRESTDWParams; var Result: string;
+  const RequestType: TRequestType; var StatusCode: Integer;
+  RequestHeader: TStringList);
+var
+  vSenha      : String;
+  vCodUsuario : Integer;
+  vDMGlobal   : TDmGlobal;
+  vBody       : System.JSON.TJSONValue;
+  vJson       : TJSONObject;
+begin
+  vDMGlobal := TDMGlobal.Create(nil);
+  try
+    try
+      vCodUsuario := fGetUsuarioRequest();
+
+      vBody  := ParseBody(Params.RawBody.AsString);
+      vSenha  := vBody.GetValue<string>('senha','');
+      FreeAndNil(vBody);
+
+      vJson := vDmGlobal.fEditarSenha(vCodUsuario, vSenha);
+
+      Result := vJson.ToJSON;
+      FreeAndNil(vJson);
+      StatusCode := 200;
+
+    except on e:Exception do
+      begin
+        StatusCode := 500;
+        Result := e.Message;
+      end;
+
+    end;
+
+  finally
+    FreeAndNil(vDMGlobal);
+
+  end;
+end;
+
 
 
 end.
