@@ -36,6 +36,19 @@ object DMServices: TDMServices
       end
       item
         Routes = [crAll]
+        NeedAuthorization = True
+        Params = <>
+        DataMode = dmRAW
+        Name = 'perfil'
+        EventName = 'perfil'
+        BaseURL = '/usuarios/'
+        DefaultContentType = 'application/json'
+        CallbackEvent = False
+        OnlyPreDefinedParams = False
+        OnReplyEventByType = ServerEventsEventsperfilReplyEventByType
+      end
+      item
+        Routes = [crAll]
         NeedAuthorization = False
         Params = <>
         DataMode = dmRAW

@@ -25,6 +25,10 @@ type
     procedure ServerEventsEventspushReplyEventByType(var Params: TRESTDWParams;
       var Result: string; const RequestType: TRequestType;
       var StatusCode: Integer; RequestHeader: TStringList);
+    procedure ServerEventsEventsperfilReplyEventByType(
+      var Params: TRESTDWParams; var Result: string;
+      const RequestType: TRequestType; var StatusCode: Integer;
+      RequestHeader: TStringList);
   private
     { Private declarations }
   public
@@ -49,6 +53,16 @@ procedure TDMServices.ServerEventsEventsloginReplyEventByType(
 begin
   //POST: /USUARIOS/LOGIN
   Controllers.Usuario.RegistrarRotasLogin(Params, Result, RequestType, StatusCode, RequestHeader);
+end;
+
+procedure TDMServices.ServerEventsEventsperfilReplyEventByType(
+  var Params: TRESTDWParams; var Result: string;
+  const RequestType: TRequestType; var StatusCode: Integer;
+  RequestHeader: TStringList);
+begin
+  //PUT /USUARIOS/PERFIL
+  Controllers.Usuario.RegistrarRotasPerfil(Params, Result, RequestType, StatusCode, RequestHeader);
+
 end;
 
 procedure TDMServices.ServerEventsEventspushReplyEventByType(

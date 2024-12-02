@@ -23,6 +23,8 @@ type
     function fInserirUsuario(pNome, pEmail, pSenha: String): TJSonObject;
     function fLogin(pEmail, pSenha: String): TJSonObject;
     procedure fPush(pCodUsuario:Integer; pTokenPush: String);
+    function fEditarUsuario(pCodUsuario: Integer; pNome,
+      pEmail: String): TJSonObject;
 
     { Public declarations }
   end;
@@ -186,6 +188,39 @@ begin
   end;
 
 end;
+
+function TDmGlobal.fEditarUsuario(pCodUsuario:Integer; pNome, pEmail: String): TJSonObject;
+var
+  vSQLQuery: TFDQuery;
+begin
+  vSQLQuery := TFDQuery.Create(nil);
+  try
+    vSQLQuery.Connection := Conn;
+
+    vSQLQuery.Active := False;
+    vSQLQuery.SQL.Clear;
+
+    vSQLQuery.SQL.Text := ' UPDATE TAB_USUARIO               ' +
+                          ' SET NOME = :NOME,                ' +
+                          ' EMAIL = :EMAIL                   ' +
+                          ' WHERE COD_USUARIO = :COD_USUARIO ' +
+                          ' RETURNING COD_USUARIO            ';
+
+    vSQLQuery.ParamByName('NOME').AsString         := pNome;
+    vSQLQuery.ParamByName('EMAIL').AsString        := pEmail;
+    vSQLQuery.ParamByName('COD_USUARIO').AsInteger := pCodUsuario;
+
+    vSQLQuery.Active := True;
+
+    Result := vSQLQuery.ToJSONObject;
+
+  finally
+    FreeAndNil(vSQLQuery);
+
+  end;
+
+end;
+
 
 
 end.

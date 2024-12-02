@@ -13,6 +13,11 @@ procedure RegistrarRotasLogin(var Params: TRESTDWParams; var Result: string;
   const RequestType: TRequestType; var StatusCode: Integer;
   RequestHeader: TStringList);
 
+procedure RegistrarRotasPerfil(var Params: TRESTDWParams; var Result: string;
+  const RequestType: TRequestType; var StatusCode: Integer;
+  RequestHeader: TStringList);
+
+
 procedure InserirUsuario(var Params: TRESTDWParams; var Result: string;
   const RequestType: TRequestType; var StatusCode: Integer;
   RequestHeader: TStringList);
@@ -26,6 +31,10 @@ procedure RegistrarRotasPush(var Params: TRESTDWParams; var Result: string;
   RequestHeader: TStringList);
 
 procedure Push(var Params: TRESTDWParams; var Result: string;
+  const RequestType: TRequestType; var StatusCode: Integer;
+  RequestHeader: TStringList);
+
+procedure EditarUsuario(var Params: TRESTDWParams; var Result: string;
   const RequestType: TRequestType; var StatusCode: Integer;
   RequestHeader: TStringList);
 
@@ -53,6 +62,14 @@ procedure RegistrarRotasPush(var Params: TRESTDWParams; var Result: string;
 begin
   if RequestType = rtPost then
     Push(Params, Result, RequestType, StatusCode, RequestHeader);
+end;
+
+procedure RegistrarRotasPerfil(var Params: TRESTDWParams; var Result: string;
+  const RequestType: TRequestType; var StatusCode: Integer;
+  RequestHeader: TStringList);
+begin
+  if RequestType = rtPut then
+    EditarUsuario(Params, Result, RequestType, StatusCode, RequestHeader);
 end;
 
 procedure InserirUsuario(var Params: TRESTDWParams; var Result: string;
@@ -87,7 +104,7 @@ begin
     except on e:Exception do
       begin
         StatusCode := 500;
-        Result := CreateJsonObjStr('erro', e.Message);
+        Result := e.Message;
       end;
 
     end;
@@ -137,7 +154,7 @@ begin
     except on e:Exception do
       begin
         StatusCode := 500;
-        Result := CreateJsonObjStr('erro', e.Message);
+        Result := e.Message;
       end;
 
     end;
@@ -173,7 +190,7 @@ begin
     except on e:Exception do
       begin
         StatusCode := 500;
-        Result := CreateJsonObjStr('erro', e.Message);
+        Result := e.Message;
       end;
 
     end;
@@ -184,6 +201,45 @@ begin
   end;
 end;
 
+procedure EditarUsuario(var Params: TRESTDWParams; var Result: string;
+  const RequestType: TRequestType; var StatusCode: Integer;
+  RequestHeader: TStringList);
+var
+  vNome, vEmail  : String;
+  vCodUsuario : Integer;
+  vDMGlobal   : TDmGlobal;
+  vBody       : System.JSON.TJSONValue;
+  vJson       : TJSONObject;
+begin
+  vDMGlobal := TDMGlobal.Create(nil);
+  try
+    try
+      vCodUsuario := fGetUsuarioRequest();
+
+      vBody  := ParseBody(Params.RawBody.AsString);
+      vNome  := vBody.GetValue<string>('nome','');
+      vEmail  := vBody.GetValue<string>('email','');
+      FreeAndNil(vBody);
+
+      vJson := vDmGlobal.fEditarUsuario(vCodUsuario, vNome, vEmail);
+
+      Result := vJson.ToJSON;
+      FreeAndNil(vJson);
+      StatusCode := 200;
+
+    except on e:Exception do
+      begin
+        StatusCode := 500;
+        Result := e.Message;
+      end;
+
+    end;
+
+  finally
+    FreeAndNil(vDMGlobal);
+
+  end;
+end;
 
 
 end.
