@@ -27,6 +27,8 @@ implementation
 
 {%CLASSGROUP 'FMX.Controls.TControl'}
 
+uses Controllers.Usuario;
+
 {$R *.dfm}
 
 procedure TDMServices.ServerEventsEventsusuariosReplyEventByType(
@@ -34,7 +36,7 @@ procedure TDMServices.ServerEventsEventsusuariosReplyEventByType(
   const RequestType: TRequestType; var StatusCode: Integer;
   RequestHeader: TStringList);
 begin
-  Result := '{"retorno: "Usuário cadastrado com sucesso"}';
+  Controllers.Usuario.RegistrarRotas(Params, Result, RequestType, StatusCode, RequestHeader);
 end;
 
 procedure TDMServices.ServerMethodDataModuleCreate(Sender: TObject);

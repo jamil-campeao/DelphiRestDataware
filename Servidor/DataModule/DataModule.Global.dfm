@@ -1,25 +1,25 @@
 object DmGlobal: TDmGlobal
   OnCreate = DataModuleCreate
-  Height = 480
-  Width = 640
+  Height = 244
+  Width = 421
   object Conn: TFDConnection
     Params.Strings = (
-      'Database=C:\Projetos\Delphi_Rest\DB\PEDIDOS.FDB'
       'User_Name=SYSDBA'
       'Password=masterkey'
-      'Server=localhost'
-      'Protocol=TCPIP'
       'Port=3050'
+      
+        'Database=C:\Temp\ws-Delphi\ProjetoRest\DelphiRestDataware\DB\PED' +
+        'IDOS.FDB'
       'DriverID=FB')
     ConnectedStoredUsage = []
     LoginPrompt = False
     BeforeConnect = ConnBeforeConnect
-    Left = 232
-    Top = 112
+    Left = 96
+    Top = 48
   end
   object DriverLink: TFDPhysFBDriverLink
     VendorLib = 'C:\Program Files (x86)\Firebird\Firebird_3_0\fbclient.dll'
-    Left = 344
-    Top = 112
+    Left = 192
+    Top = 56
   end
 end

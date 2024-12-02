@@ -8,6 +8,7 @@ object frmPrincipal: TfrmPrincipal
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
   OnCreate = FormCreate
+  OnShow = FormShow
   DesignerMasterStyle = 0
   object Switch: TSwitch
     Align = Center
@@ -26,6 +27,14 @@ object frmPrincipal: TfrmPrincipal
     TextSettings.Font.StyleExt = {00070000000000000004000000}
     Text = 'Servidor Ativo'
     TabOrder = 1
+  end
+  object cbLerIni: TCheckBox
+    IsChecked = True
+    Position.X = 378.000000000000000000
+    Position.Y = 272.000000000000000000
+    TabOrder = 3
+    Text = 'Ler Ini'
+    OnChange = cbLerIniChange
   end
   object ServicePooler: TRESTDWIdServicePooler
     Active = False
