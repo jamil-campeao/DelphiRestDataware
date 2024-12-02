@@ -3,7 +3,7 @@ unit Controllers.Usuario;
 interface
 
 uses System.JSON, uRESTDWConsts, uRESTDWParams, System.Classes,
-System.SysUtils, DataModule.Global, uFunctions;
+System.SysUtils, DataModule.Global, uFunctions, Controllers.Auth;
 
 procedure RegistrarRotas(var Params: TRESTDWParams; var Result: string;
   const RequestType: TRequestType; var StatusCode: Integer;
@@ -60,6 +60,10 @@ begin
 
       vJson := vDmGlobal.InserirUsuario(vNome, vEmail, vSenha);
 
+      vCodUsuario := vJson.GetValue<Integer>('cod_usuario',0);
+      //gero o token contendo o cod do usuario
+      vJson.AddPair('token',fCriarToken(vCodUsuario));
+
       Result := vJson.ToJSON;
       FreeAndNil(vJson);
       StatusCode := 201;
@@ -104,8 +108,12 @@ begin
       end
       else
       begin
-        Result := vJson.ToJSON;
+        vCodUsuario := vJson.GetValue<Integer>('cod_usuario',0);
+        //gero o token contendo o cod do usuario
+        vJson.AddPair('token',fCriarToken(vCodUsuario));
+
         StatusCode := 200;
+        Result := vJson.ToJSON;
       end;
 
       FreeAndNil(vJson);

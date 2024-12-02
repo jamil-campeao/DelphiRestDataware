@@ -1,6 +1,7 @@
 object DMServices: TDMServices
   OnCreate = ServerMethodDataModuleCreate
   Encoding = esUtf8
+  OnUserTokenAuth = ServerMethodDataModuleUserTokenAuth
   QueuedRequest = False
   Height = 292
   Width = 220

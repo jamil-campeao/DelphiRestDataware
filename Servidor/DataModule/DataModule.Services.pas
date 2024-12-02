@@ -4,7 +4,8 @@ interface
 
 uses
   System.SysUtils, System.Classes, uRESTDWDatamodule, uRESTDWComponentBase,
-  uRESTDWServerEvents, uRESTDWParams, uRESTDWConsts, DataSet.Serialize.Config;
+  uRESTDWServerEvents, uRESTDWParams, uRESTDWConsts, DataSet.Serialize.Config,
+  uRESTDWDataUtils;
 
 type
   TDMServices = class(TServerMethodDataModule)
@@ -17,6 +18,10 @@ type
     procedure ServerEventsEventsloginReplyEventByType(var Params: TRESTDWParams;
       var Result: string; const RequestType: TRequestType;
       var StatusCode: Integer; RequestHeader: TStringList);
+    procedure ServerMethodDataModuleUserTokenAuth(Welcomemsg, AccessTag: string;
+      Params: TRESTDWParams; AuthOptions: TRESTDWAuthTokenParam;
+      var ErrorCode: Integer; var ErrorMessage, TokenID: string;
+      var Accept: Boolean);
   private
     { Private declarations }
   public
@@ -30,7 +35,7 @@ implementation
 
 {%CLASSGROUP 'FMX.Controls.TControl'}
 
-uses Controllers.Usuario;
+uses Controllers.Usuario, Controllers.Auth;
 
 {$R *.dfm}
 
@@ -57,6 +62,19 @@ begin
   TDataSetSerializeConfig.GetInstance.CaseNameDefinition := cndLower;
   TDataSetSerializeConfig.GetInstance.Import.DecimalSeparator := '.';
 
+end;
+
+procedure TDMServices.ServerMethodDataModuleUserTokenAuth(Welcomemsg,
+  AccessTag: string; Params: TRESTDWParams; AuthOptions: TRESTDWAuthTokenParam;
+  var ErrorCode: Integer; var ErrorMessage, TokenID: string;
+  var Accept: Boolean);
+begin
+  try
+    Controllers.Auth.vID_USUARIO := AuthOptions.Secrets.ToInteger;
+    Accept := True;
+  except
+    Accept := False;
+  end;
 end;
 
 end.

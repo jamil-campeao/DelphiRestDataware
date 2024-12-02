@@ -5,7 +5,8 @@ interface
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls,
-  FMX.Controls.Presentation, uRESTDWComponentBase, uRESTDWBasic, uRESTDWIdBase;
+  FMX.Controls.Presentation, uRESTDWComponentBase, uRESTDWBasic, uRESTDWIdBase,
+  uRESTDWDataUtils;
 
 type
   TfrmPrincipal = class(TForm)
@@ -31,7 +32,7 @@ implementation
 
 {$R *.fmx}
 
-uses DataModule.Services;
+uses DataModule.Services, Controllers.Auth;
 
 procedure TfrmPrincipal.cbLerIniChange(Sender: TObject);
 begin
@@ -45,6 +46,16 @@ procedure TfrmPrincipal.FormCreate(Sender: TObject);
 begin
   ServicePooler.ServerMethodClass := TDMServices;
   ServicePooler.Active := Switch.IsChecked;
+
+  //Configurações JWT
+  with ServicePooler do
+  begin
+    AuthenticationOptions.AuthorizationOption := rdwAOBearer;
+    TRESTDWAuthOptionBearerServer(AuthenticationOptions.OptionParams).TokenType       := rdwJWT;
+    TRESTDWAuthOptionBearerServer(AuthenticationOptions.OptionParams).TokenHash       := Controllers.Auth.cSecret;
+    TRESTDWAuthOptionBearerServer(AuthenticationOptions.OptionParams).ServerSignature := '';
+    TRESTDWAuthOptionBearerServer(AuthenticationOptions.OptionParams).LifeCycle       := 0;
+  end;
 end;
 
 procedure TfrmPrincipal.FormShow(Sender: TObject);
