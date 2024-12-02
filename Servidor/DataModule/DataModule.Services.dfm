@@ -98,6 +98,19 @@ object DMServices: TDMServices
         CallbackEvent = False
         OnlyPreDefinedParams = False
         OnReplyEventByType = ServerEventsEventsnotificacoesReplyEventByType
+      end
+      item
+        Routes = [crAll]
+        NeedAuthorization = True
+        Params = <>
+        DataMode = dmRAW
+        Name = 'cond_pagto'
+        EventName = 'cond-pagto'
+        BaseURL = '/'
+        DefaultContentType = 'application/json'
+        CallbackEvent = False
+        OnlyPreDefinedParams = False
+        OnReplyEventByType = ServerEventsEventscond_pagtoReplyEventByType
       end>
     Left = 40
     Top = 48

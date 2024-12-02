@@ -27,6 +27,7 @@ type
       pEmail: String): TJSonObject;
     function fEditarSenha(pCodUsuario: Integer; pSenha: String): TJSonObject;
     function fListarNotificacoes(pCodUsuario: Integer): TJSonArray;
+    function fListarCondPagto: TJSonArray;
 
     { Public declarations }
   end;
@@ -361,6 +362,32 @@ begin
 
 end;
 
+function TDmGlobal.fListarCondPagto: TJSonArray;
+var
+  vSQLQuery: TFDQuery;
+begin
+  vSQLQuery := TFDQuery.Create(nil);
+  try
+    vSQLQuery.Connection := Conn;
+
+    vSQLQuery.Active := False;
+    vSQLQuery.SQL.Clear;
+
+    vSQLQuery.SQL.Text := ' SELECT                     ' +
+                          ' COD_COND_PAGTO,            ' +
+                          ' COND_PAGTO                 ' +
+                          ' FROM TAB_COND_PAGTO        ' +
+                          ' ORDER BY COD_COND_PAGTO    ';
+    vSQLQuery.Active := True;
+
+    Result := vSQLQuery.ToJSONArray;
+
+  finally
+    FreeAndNil(vSQLQuery);
+
+  end;
+
+end;
 
 
 end.

@@ -40,6 +40,10 @@ type
       var Params: TRESTDWParams; var Result: string;
       const RequestType: TRequestType; var StatusCode: Integer;
       RequestHeader: TStringList);
+    procedure ServerEventsEventscond_pagtoReplyEventByType(
+      var Params: TRESTDWParams; var Result: string;
+      const RequestType: TRequestType; var StatusCode: Integer;
+      RequestHeader: TStringList);
   private
     { Private declarations }
   public
@@ -53,9 +57,20 @@ implementation
 
 {%CLASSGROUP 'FMX.Controls.TControl'}
 
-uses Controllers.Usuario, Controllers.Auth, Controllers.Notificacao;
+uses Controllers.Usuario, Controllers.Auth, Controllers.Notificacao,
+Controllers.CondPagto;
 
 {$R *.dfm}
+
+procedure TDMServices.ServerEventsEventscond_pagtoReplyEventByType(
+  var Params: TRESTDWParams; var Result: string;
+  const RequestType: TRequestType; var StatusCode: Integer;
+  RequestHeader: TStringList);
+begin
+  //GET: /COND-PAGTO
+  Controllers.CondPagto.RegistrarRotas(Params, Result, RequestType, StatusCode, RequestHeader);
+
+end;
 
 procedure TDMServices.ServerEventsEventshorarioReplyEventByType(
   var Params: TRESTDWParams; var Result: string;
