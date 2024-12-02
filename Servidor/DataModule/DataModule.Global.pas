@@ -20,8 +20,9 @@ type
     procedure CarregarConfigDB(Connection: TFDConnection);
     { Private declarations }
   public
-    function InserirUsuario(pNome, pEmail, pSenha: String): TJSonObject;
-    function Login(pEmail, pSenha: String): TJSonObject;
+    function fInserirUsuario(pNome, pEmail, pSenha: String): TJSonObject;
+    function fLogin(pEmail, pSenha: String): TJSonObject;
+    procedure fPush(pCodUsuario:Integer; pTokenPush: String);
 
     { Public declarations }
   end;
@@ -93,7 +94,7 @@ begin
   end;
 end;
 
-function TDmGlobal.InserirUsuario(pNome, pEmail, pSenha: String): TJSonObject;
+function TDmGlobal.fInserirUsuario(pNome, pEmail, pSenha: String): TJSonObject;
 var
   vSQLQuery: TFDQuery;
 begin
@@ -126,7 +127,7 @@ begin
 
 end;
 
-function TDmGlobal.Login(pEmail, pSenha: String): TJSonObject;
+function TDmGlobal.fLogin(pEmail, pSenha: String): TJSonObject;
 var
   vSQLQuery: TFDQuery;
 begin
@@ -160,5 +161,33 @@ begin
   end;
 
 end;
+
+procedure TDmGlobal.fPush(pCodUsuario:Integer; pTokenPush: String);
+var
+  vSQLQuery: TFDQuery;
+begin
+  vSQLQuery := TFDQuery.Create(nil);
+  try
+    vSQLQuery.Connection := Conn;
+
+    vSQLQuery.Active := False;
+    vSQLQuery.SQL.Clear;
+
+    vSQLQuery.SQL.Text := ' UPDATE TAB_USUARIO               ' +
+                          ' SET TOKEN_PUSH = :TOKEN_PUSH     ' +
+                          ' WHERE COD_USUARIO = :COD_USUARIO ';
+
+    vSQLQuery.ParamByName('TOKEN_PUSH').AsString   := pTokenPush;
+    vSQLQuery.ParamByName('COD_USUARIO').asInteger := pCodUsuario;
+
+    vSQLQuery.ExecSQL;
+
+  finally
+    FreeAndNil(vSQLQuery);
+
+  end;
+
+end;
+
 
 end.

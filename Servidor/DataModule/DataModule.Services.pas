@@ -22,6 +22,9 @@ type
       Params: TRESTDWParams; AuthOptions: TRESTDWAuthTokenParam;
       var ErrorCode: Integer; var ErrorMessage, TokenID: string;
       var Accept: Boolean);
+    procedure ServerEventsEventspushReplyEventByType(var Params: TRESTDWParams;
+      var Result: string; const RequestType: TRequestType;
+      var StatusCode: Integer; RequestHeader: TStringList);
   private
     { Private declarations }
   public
@@ -46,6 +49,16 @@ procedure TDMServices.ServerEventsEventsloginReplyEventByType(
 begin
   //POST: /USUARIOS/LOGIN
   Controllers.Usuario.RegistrarRotasLogin(Params, Result, RequestType, StatusCode, RequestHeader);
+end;
+
+procedure TDMServices.ServerEventsEventspushReplyEventByType(
+  var Params: TRESTDWParams; var Result: string;
+  const RequestType: TRequestType; var StatusCode: Integer;
+  RequestHeader: TStringList);
+begin
+  //POST /USUARIOS/PUSH
+  Controllers.Usuario.RegistrarRotasPush(Params, Result, RequestType, StatusCode, RequestHeader);
+
 end;
 
 procedure TDMServices.ServerEventsEventsusuariosReplyEventByType(

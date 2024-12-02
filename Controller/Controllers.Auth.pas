@@ -10,12 +10,12 @@ const
 var
   vID_USUARIO: Integer;
 
-function fCriarToken(id_usuario: Integer): String;
+function fCriarToken(pIdUsuario: Integer): String;
 function fGetUsuarioRequest: Integer;
 
 implementation
 
-function fCriarToken(id_usuario: Integer): String;
+function fCriarToken(pIdUsuario: Integer): String;
 var
   vTokenValue: TTokenValue;
   vJson      : TJSONValue;
@@ -24,7 +24,7 @@ begin
   vTokenValue.TokenHash := cSecret;
   vTokenValue.TokenType := rdwJWT;
   vTokenValue.CryptType := rdwAES256;
-  vTokenValue.Secrets   := vID_USUARIO.ToString;
+  vTokenValue.Secrets   := pIdUsuario.ToString;
 //  vTokenValue.BeginTime := now + 30;
 
   try

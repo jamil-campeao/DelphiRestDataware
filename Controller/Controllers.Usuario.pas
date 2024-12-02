@@ -21,6 +21,14 @@ procedure Login(var Params: TRESTDWParams; var Result: string;
   const RequestType: TRequestType; var StatusCode: Integer;
   RequestHeader: TStringList);
 
+procedure RegistrarRotasPush(var Params: TRESTDWParams; var Result: string;
+  const RequestType: TRequestType; var StatusCode: Integer;
+  RequestHeader: TStringList);
+
+procedure Push(var Params: TRESTDWParams; var Result: string;
+  const RequestType: TRequestType; var StatusCode: Integer;
+  RequestHeader: TStringList);
+
 implementation
 
 procedure RegistrarRotas(var Params: TRESTDWParams; var Result: string;
@@ -37,6 +45,14 @@ procedure RegistrarRotasLogin(var Params: TRESTDWParams; var Result: string;
 begin
   if RequestType = rtPost then
     Login(Params, Result, RequestType, StatusCode, RequestHeader);
+end;
+
+procedure RegistrarRotasPush(var Params: TRESTDWParams; var Result: string;
+  const RequestType: TRequestType; var StatusCode: Integer;
+  RequestHeader: TStringList);
+begin
+  if RequestType = rtPost then
+    Push(Params, Result, RequestType, StatusCode, RequestHeader);
 end;
 
 procedure InserirUsuario(var Params: TRESTDWParams; var Result: string;
@@ -58,7 +74,7 @@ begin
       vSenha := vBody.GetValue<string>('senha', '');
       FreeAndNil(vBody);
 
-      vJson := vDmGlobal.InserirUsuario(vNome, vEmail, vSenha);
+      vJson := vDmGlobal.fInserirUsuario(vNome, vEmail, vSenha);
 
       vCodUsuario := vJson.GetValue<Integer>('cod_usuario',0);
       //gero o token contendo o cod do usuario
@@ -100,7 +116,7 @@ begin
       vSenha := vBody.GetValue<string>('senha', '');
       FreeAndNil(vBody);
 
-      vJson := vDmGlobal.Login(vEmail, vSenha);
+      vJson := vDmGlobal.fLogin(vEmail, vSenha);
       if vJson.Size = 0 then
       begin
         StatusCode := 401;
@@ -131,5 +147,43 @@ begin
 
   end;
 end;
+
+procedure Push(var Params: TRESTDWParams; var Result: string;
+  const RequestType: TRequestType; var StatusCode: Integer;
+  RequestHeader: TStringList);
+var
+  vTokenPush  : String;
+  vCodUsuario : Integer;
+  vDMGlobal   : TDmGlobal;
+  vBody       : System.JSON.TJSONValue;
+begin
+  vDMGlobal := TDMGlobal.Create(nil);
+  try
+    try
+      vBody  := ParseBody(Params.RawBody.AsString);
+      vCodUsuario := fGetUsuarioRequest();
+      vTokenPush  := vBody.GetValue<string>('token_push', '');
+      FreeAndNil(vBody);
+
+      vDmGlobal.fPush(vCodUsuario, vTokenPush);
+
+      Result := CreateJsonObjStr('id_usuario', vCodUsuario);
+      StatusCode := 200;
+
+    except on e:Exception do
+      begin
+        StatusCode := 500;
+        Result := CreateJsonObjStr('erro', e.Message);
+      end;
+
+    end;
+
+  finally
+    FreeAndNil(vDMGlobal);
+
+  end;
+end;
+
+
 
 end.

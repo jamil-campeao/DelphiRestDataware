@@ -23,6 +23,19 @@ object DMServices: TDMServices
       end
       item
         Routes = [crAll]
+        NeedAuthorization = True
+        Params = <>
+        DataMode = dmRAW
+        Name = 'push'
+        EventName = 'push'
+        BaseURL = '/usuarios/'
+        DefaultContentType = 'application/json'
+        CallbackEvent = False
+        OnlyPreDefinedParams = False
+        OnReplyEventByType = ServerEventsEventspushReplyEventByType
+      end
+      item
+        Routes = [crAll]
         NeedAuthorization = False
         Params = <>
         DataMode = dmRAW
