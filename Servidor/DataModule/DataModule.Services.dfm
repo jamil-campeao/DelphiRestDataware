@@ -49,19 +49,6 @@ object DMServices: TDMServices
       end
       item
         Routes = [crAll]
-        NeedAuthorization = False
-        Params = <>
-        DataMode = dmRAW
-        Name = 'usuarios'
-        EventName = 'usuarios'
-        BaseURL = '/'
-        DefaultContentType = 'application/json'
-        CallbackEvent = False
-        OnlyPreDefinedParams = False
-        OnReplyEventByType = ServerEventsEventsusuariosReplyEventByType
-      end
-      item
-        Routes = [crAll]
         NeedAuthorization = True
         Params = <>
         DataMode = dmRAW
@@ -72,6 +59,32 @@ object DMServices: TDMServices
         CallbackEvent = False
         OnlyPreDefinedParams = False
         OnReplyEventByType = ServerEventsEventssenhaReplyEventByType
+      end
+      item
+        Routes = [crAll]
+        NeedAuthorization = True
+        Params = <>
+        DataMode = dmRAW
+        Name = 'horario'
+        EventName = 'horario'
+        BaseURL = '/usuarios/'
+        DefaultContentType = 'application/json'
+        CallbackEvent = False
+        OnlyPreDefinedParams = False
+        OnReplyEventByType = ServerEventsEventshorarioReplyEventByType
+      end
+      item
+        Routes = [crAll]
+        NeedAuthorization = False
+        Params = <>
+        DataMode = dmRAW
+        Name = 'usuarios'
+        EventName = 'usuarios'
+        BaseURL = '/'
+        DefaultContentType = 'application/json'
+        CallbackEvent = False
+        OnlyPreDefinedParams = False
+        OnReplyEventByType = ServerEventsEventsusuariosReplyEventByType
       end>
     Left = 40
     Top = 48

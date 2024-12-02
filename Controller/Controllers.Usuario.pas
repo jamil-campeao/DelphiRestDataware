@@ -46,6 +46,14 @@ procedure EditarSenha(var Params: TRESTDWParams; var Result: string;
   const RequestType: TRequestType; var StatusCode: Integer;
   RequestHeader: TStringList);
 
+procedure RegistrarRotasHorario(var Params: TRESTDWParams; var Result: string;
+  const RequestType: TRequestType; var StatusCode: Integer;
+  RequestHeader: TStringList);
+
+procedure ObterDataServidor(var Params: TRESTDWParams; var Result: string;
+  const RequestType: TRequestType; var StatusCode: Integer;
+  RequestHeader: TStringList);
+
 implementation
 
 procedure RegistrarRotas(var Params: TRESTDWParams; var Result: string;
@@ -86,7 +94,14 @@ procedure RegistrarRotasSenha(var Params: TRESTDWParams; var Result: string;
 begin
   if RequestType = rtPut then
     EditarSenha(Params, Result, RequestType, StatusCode, RequestHeader);
+end;
 
+procedure RegistrarRotasHorario(var Params: TRESTDWParams; var Result: string;
+  const RequestType: TRequestType; var StatusCode: Integer;
+  RequestHeader: TStringList);
+begin
+  if RequestType = rtget then
+    ObterDataServidor(Params, Result, RequestType, StatusCode, RequestHeader);
 end;
 
 procedure InserirUsuario(var Params: TRESTDWParams; var Result: string;
@@ -295,6 +310,14 @@ begin
     FreeAndNil(vDMGlobal);
 
   end;
+end;
+
+procedure ObterDataServidor(var Params: TRESTDWParams; var Result: string;
+  const RequestType: TRequestType; var StatusCode: Integer;
+  RequestHeader: TStringList);
+begin
+  Result := FormatDateTime('yyyy-mm-dd hh:nn:ss', now);
+  StatusCode := 200;
 end;
 
 

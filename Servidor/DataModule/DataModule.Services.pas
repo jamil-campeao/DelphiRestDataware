@@ -32,6 +32,10 @@ type
     procedure ServerEventsEventssenhaReplyEventByType(var Params: TRESTDWParams;
       var Result: string; const RequestType: TRequestType;
       var StatusCode: Integer; RequestHeader: TStringList);
+    procedure ServerEventsEventshorarioReplyEventByType(
+      var Params: TRESTDWParams; var Result: string;
+      const RequestType: TRequestType; var StatusCode: Integer;
+      RequestHeader: TStringList);
   private
     { Private declarations }
   public
@@ -48,6 +52,16 @@ implementation
 uses Controllers.Usuario, Controllers.Auth;
 
 {$R *.dfm}
+
+procedure TDMServices.ServerEventsEventshorarioReplyEventByType(
+  var Params: TRESTDWParams; var Result: string;
+  const RequestType: TRequestType; var StatusCode: Integer;
+  RequestHeader: TStringList);
+begin
+  //GET: /USUARIOS/HORARIO
+  Controllers.Usuario.RegistrarRotasHorario(Params, Result, RequestType, StatusCode, RequestHeader);
+
+end;
 
 procedure TDMServices.ServerEventsEventsloginReplyEventByType(
   var Params: TRESTDWParams; var Result: string;
