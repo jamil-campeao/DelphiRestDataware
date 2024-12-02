@@ -8,7 +8,7 @@ uses
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.FMXUI.Wait,
   Data.DB, FireDAC.Comp.Client, FireDAC.Phys.FB, FireDAC.Phys.FBDef,
   FireDAC.Phys.IBBase, System.IniFiles, FireDAC.VCLUI.Wait, System.JSON,
-  DataSet.Serialize, FireDac.DApt;
+  DataSet.Serialize, FireDac.DApt, uMD5;
 
 type
   TDmGlobal = class(TDataModule)
@@ -62,11 +62,9 @@ begin
     Conn.Params.Database := vDatabase;
     Conn.Params.UserName := vUserName;
     Conn.Params.Password := vPassword;
-    if vServer <> '' then
-      Conn.Params.Add('Server=' + vServer);
+    Conn.Params.Add('Server=' + vServer);
     Conn.Params.Add('Port=' + IntToStr(vPort));
-    if vProtocol <> '' then
-      Conn.Params.Add('Protocol=' + vProtocol);
+    Conn.Params.Add('Protocol=' + vProtocol);
     Conn.Params.Add('VendorLib=' + vVendorLib);
   except
     on E: Exception do
@@ -113,7 +111,7 @@ begin
 
     vSQLQuery.ParamByName('NOME').AsString  := pNome;
     vSQLQuery.ParamByName('EMAIL').AsString := pEmail;
-    vSQLQuery.ParamByName('SENHA').AsString := pSenha;
+    vSQLQuery.ParamByName('SENHA').AsString := fSaltPassword(pSenha);
 
     vSQLQuery.Active := True;
 
@@ -148,7 +146,7 @@ begin
                           ' AND SENHA = :SENHA     ';
 
     vSQLQuery.ParamByName('EMAIL').AsString := pEmail;
-    vSQLQuery.ParamByName('SENHA').AsString := pSenha;
+    vSQLQuery.ParamByName('SENHA').AsString := fSaltPassword(pSenha);
 
     vSQLQuery.Active := True;
 

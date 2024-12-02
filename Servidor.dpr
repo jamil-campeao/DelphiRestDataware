@@ -8,7 +8,8 @@ uses
   DataModule.Global in 'Servidor\DataModule\DataModule.Global.pas' {DmGlobal: TDataModule},
   Controllers.Usuario in 'Controller\Controllers.Usuario.pas',
   uFunctions in 'Units\uFunctions.pas',
-  Controllers.Auth in 'Controller\Controllers.Auth.pas';
+  Controllers.Auth in 'Controller\Controllers.Auth.pas',
+  uMD5 in 'Units\uMD5.pas';
 
 {$R *.res}
 
