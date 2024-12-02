@@ -99,9 +99,30 @@ function TDmGlobal.fInserirUsuario(pNome, pEmail, pSenha: String): TJSonObject;
 var
   vSQLQuery: TFDQuery;
 begin
+  if (pEmail = '') or (pSenha = '') or (pNome = '') then
+    raise Exception.Create('Informe o nome, e-mail e a senha do usuário');
+
+  if pSenha.Length < 5 then
+    raise Exception.Create('A senha deve conter pelo menos 5 caracteres!');
+
   vSQLQuery := TFDQuery.Create(nil);
   try
+    //Validação E-mail
     vSQLQuery.Connection := Conn;
+
+    vSQLQuery.Active := False;
+    vSQLQuery.SQL.Clear;
+
+    vSQLQuery.SQL.Text := ' SELECT COD_USUARIO   ' +
+                          ' FROM TAB_USUARIO     ' +
+                          ' WHERE EMAIL = :EMAIL ';
+
+
+    vSQLQuery.ParamByName('EMAIL').AsString  := pEmail;
+    vSQLQuery.Active := True;
+
+    if vSQLQuery.RecordCount > 0 then
+      raise Exception.Create('Email informado já esta em uso por outro usuário!');
 
     vSQLQuery.Active := False;
     vSQLQuery.SQL.Clear;
@@ -123,7 +144,6 @@ begin
 
   finally
     FreeAndNil(vSQLQuery);
-
   end;
 
 end;
@@ -132,6 +152,9 @@ function TDmGlobal.fLogin(pEmail, pSenha: String): TJSonObject;
 var
   vSQLQuery: TFDQuery;
 begin
+  if (pEmail = '') or (pSenha = '') then
+    raise Exception.Create('Informe o e-mail e a senha');
+
   vSQLQuery := TFDQuery.Create(nil);
   try
     vSQLQuery.Connection := Conn;
@@ -167,6 +190,9 @@ procedure TDmGlobal.fPush(pCodUsuario:Integer; pTokenPush: String);
 var
   vSQLQuery: TFDQuery;
 begin
+  if pTokenPush = '' then
+    raise Exception.Create('Informe o token push do usuário');
+
   vSQLQuery := TFDQuery.Create(nil);
   try
     vSQLQuery.Connection := Conn;
@@ -194,9 +220,30 @@ function TDmGlobal.fEditarUsuario(pCodUsuario:Integer; pNome, pEmail: String): T
 var
   vSQLQuery: TFDQuery;
 begin
+  if (pNome = '') or (pEmail = '') then
+    raise Exception.Create('Informe o nome e e-mail do usuário');
+
   vSQLQuery := TFDQuery.Create(nil);
   try
+    //Validação Email
     vSQLQuery.Connection := Conn;
+
+        vSQLQuery.Active := False;
+    vSQLQuery.SQL.Clear;
+
+    vSQLQuery.SQL.Text := ' SELECT COD_USUARIO               ' +
+                          ' FROM TAB_USUARIO                 ' +
+                          ' WHERE EMAIL = :EMAIL             ' +
+                          ' AND COD_USUARIO <> :COD_USUARIO  ';
+
+    vSQLQuery.ParamByName('EMAIL').AsString         := pEmail;
+    vSQLQuery.ParamByName('COD_USUARIO').AsInteger  := pCodUsuario;
+    vSQLQuery.Active := True;
+
+    if vSQLQuery.RecordCount > 0 then
+      raise Exception.Create('Email informado já esta em uso em outra conta!');
+
+
 
     vSQLQuery.Active := False;
     vSQLQuery.SQL.Clear;
@@ -226,6 +273,12 @@ function TDmGlobal.fEditarSenha(pCodUsuario:Integer; pSenha: String): TJSonObjec
 var
   vSQLQuery: TFDQuery;
 begin
+  if pSenha = '' then
+    raise Exception.Create('Informe a nova senha do usuário');
+
+  if pSenha.Length < 5 then
+    raise Exception.Create('A senha deve conter pelo menos 5 caracteres!');
+
   vSQLQuery := TFDQuery.Create(nil);
   try
     vSQLQuery.Connection := Conn;
@@ -251,8 +304,6 @@ begin
   end;
 
 end;
-
-
 
 
 end.
