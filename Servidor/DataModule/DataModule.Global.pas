@@ -28,6 +28,7 @@ type
     function fEditarSenha(pCodUsuario: Integer; pSenha: String): TJSonObject;
     function fListarNotificacoes(pCodUsuario: Integer): TJSonArray;
     function fListarCondPagto: TJSonArray;
+    function fListarClientes(pDtUltSinc: String): TJSonArray;
 
     { Public declarations }
   end;
@@ -388,6 +389,38 @@ begin
   end;
 
 end;
+
+function TDmGlobal.fListarClientes(pDtUltSinc: String): TJSonArray;
+var
+  vSQLQuery: TFDQuery;
+begin
+  if pDtUltSinc = '' then
+    raise Exception.Create('Parâmetro dt_ult_sincronizao não informado');
+
+  vSQLQuery := TFDQuery.Create(nil);
+  try
+    vSQLQuery.Connection := Conn;
+
+    vSQLQuery.Active := False;
+    vSQLQuery.SQL.Clear;
+
+    vSQLQuery.SQL.Text := ' SELECT *                                       ' +
+                          ' FROM TAB_CLIENTE                               ' +
+                          ' WHERE DATA_ULT_ALTERACAO > :DATA_ULT_ALTERACAO ' +
+                          ' ORDER BY COD_CLIENTE                           ';
+
+    vSQLQuery.ParamByName('DATA_ULT_ALTERACAO').AsString := pDtUltSinc;
+    vSQLQuery.Active := True;
+
+    Result := vSQLQuery.ToJSONArray;
+
+  finally
+    FreeAndNil(vSQLQuery);
+
+  end;
+
+end;
+
 
 
 end.

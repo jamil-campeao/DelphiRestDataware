@@ -44,6 +44,10 @@ type
       var Params: TRESTDWParams; var Result: string;
       const RequestType: TRequestType; var StatusCode: Integer;
       RequestHeader: TStringList);
+    procedure ServerEventsEventssincronizacaoReplyEventByType(
+      var Params: TRESTDWParams; var Result: string;
+      const RequestType: TRequestType; var StatusCode: Integer;
+      RequestHeader: TStringList);
   private
     { Private declarations }
   public
@@ -58,7 +62,7 @@ implementation
 {%CLASSGROUP 'FMX.Controls.TControl'}
 
 uses Controllers.Usuario, Controllers.Auth, Controllers.Notificacao,
-Controllers.CondPagto;
+Controllers.CondPagto, Controllers.Cliente;
 
 {$R *.dfm}
 
@@ -128,6 +132,16 @@ procedure TDMServices.ServerEventsEventssenhaReplyEventByType(
 begin
   //PUT /USUARIOS/SENHA
   Controllers.Usuario.RegistrarRotasSenha(Params, Result, RequestType, StatusCode, RequestHeader);
+
+end;
+
+procedure TDMServices.ServerEventsEventssincronizacaoReplyEventByType(
+  var Params: TRESTDWParams; var Result: string;
+  const RequestType: TRequestType; var StatusCode: Integer;
+  RequestHeader: TStringList);
+begin
+  //GET, POST /CLIENTES/SINCRONIZACAO
+  Controllers.Cliente.RegistrarRotas(Params, Result, RequestType, StatusCode, RequestHeader);
 
 end;
 

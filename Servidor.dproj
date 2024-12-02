@@ -269,6 +269,7 @@
         <DCCReference Include="Units\uMD5.pas"/>
         <DCCReference Include="Controller\Controllers.Notificacao.pas"/>
         <DCCReference Include="Controller\Controllers.CondPagto.pas"/>
+        <DCCReference Include="Controller\Controllers.Cliente.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

@@ -11,7 +11,8 @@ uses
   Controllers.Auth in 'Controller\Controllers.Auth.pas',
   uMD5 in 'Units\uMD5.pas',
   Controllers.Notificacao in 'Controller\Controllers.Notificacao.pas',
-  Controllers.CondPagto in 'Controller\Controllers.CondPagto.pas';
+  Controllers.CondPagto in 'Controller\Controllers.CondPagto.pas',
+  Controllers.Cliente in 'Controller\Controllers.Cliente.pas';
 
 {$R *.res}
 
