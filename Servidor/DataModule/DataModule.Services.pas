@@ -57,13 +57,10 @@ type
       var Params: TRESTDWParams; var Result: string;
       const RequestType: TRequestType; var StatusCode: Integer;
       RequestHeader: TStringList);
-<<<<<<< HEAD
     procedure ServerContextContextListlistar_fotoReplyRequestStream(
       const Params: TRESTDWParams; var ContentType: string;
       const Result: TMemoryStream; const RequestType: TRequestType;
       var StatusCode: Integer);
-=======
->>>>>>> 5c055714880672f08bbcb77e5d930c712f0ea39b
   private
     { Private declarations }
   public

@@ -39,11 +39,7 @@ type
       pDescricao: String; pValor, pQtdEstoque: Double;
       pCodProdutoOficial: Integer; pDtUltSincronizacao: String): TJSonObject;
     procedure EditarFoto(pCodProduto: Integer; pFoto: TBitMap);
-<<<<<<< HEAD
     function fListarFoto(pCodProduto: Integer): TMemoryStream;
-=======
->>>>>>> 5c055714880672f08bbcb77e5d930c712f0ea39b
-
     { Public declarations }
   end;
 
@@ -629,8 +625,6 @@ begin
 
 end;
 
-<<<<<<< HEAD
-
 function TDmGlobal.fListarFoto(pCodProduto: Integer): TMemoryStream;
 var
   vSQLQuery: TFDQuery;
@@ -666,8 +660,5 @@ begin
   end;
 
 end;
-
-=======
->>>>>>> 5c055714880672f08bbcb77e5d930c712f0ea39b
 
 end.

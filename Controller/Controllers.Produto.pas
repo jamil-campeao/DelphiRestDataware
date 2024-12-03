@@ -14,13 +14,10 @@ procedure RegistrarRotasFoto(var Params: TRESTDWParams; var Result: string;
   const RequestType: TRequestType; var StatusCode: Integer;
   RequestHeader: TStringList);
 
-<<<<<<< HEAD
 procedure RegistrarRotasFotoStream(const Params: TRESTDWParams; var ContentType: string;
   const Result: TMemoryStream; const RequestType: TRequestType;
   var StatusCode: Integer);
 
-=======
->>>>>>> 5c055714880672f08bbcb77e5d930c712f0ea39b
 procedure ListarProdutos(var Params: TRESTDWParams; var Result: string;
   const RequestType: TRequestType; var StatusCode: Integer;
   RequestHeader: TStringList);
@@ -33,13 +30,10 @@ procedure EditarFoto(var Params: TRESTDWParams; var Result: string;
   const RequestType: TRequestType; var StatusCode: Integer;
   RequestHeader: TStringList);
 
-<<<<<<< HEAD
 procedure ListarFoto(const Params: TRESTDWParams; var ContentType: string;
   const Result: TMemoryStream; const RequestType: TRequestType;
   var StatusCode: Integer);
 
-=======
->>>>>>> 5c055714880672f08bbcb77e5d930c712f0ea39b
 implementation
 
 
@@ -63,10 +57,6 @@ begin
     EditarFoto(Params, Result, RequestType, StatusCode, RequestHeader)
   end;
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 5c055714880672f08bbcb77e5d930c712f0ea39b
 procedure ListarProdutos(var Params: TRESTDWParams; var Result: string;
   const RequestType: TRequestType; var StatusCode: Integer;
   RequestHeader: TStringList);
@@ -201,7 +191,6 @@ begin
 
   end;
 end;
-<<<<<<< HEAD
 
 procedure RegistrarRotasFotoStream(const Params: TRESTDWParams; var ContentType: string;
   const Result: TMemoryStream; const RequestType: TRequestType;
@@ -244,8 +233,5 @@ begin
 
   end;
 end;
-
-=======
->>>>>>> 5c055714880672f08bbcb77e5d930c712f0ea39b
 
 end.
