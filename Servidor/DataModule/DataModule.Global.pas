@@ -18,6 +18,7 @@ type
     procedure DataModuleCreate(Sender: TObject);
   private
     procedure CarregarConfigDB(Connection: TFDConnection);
+    function fListarItensPedidos(pSQLQuery: TFDQuery; pCodPedido: Integer): TJSONArray;
     { Private declarations }
   public
     function fInserirUsuario(pNome, pEmail, pSenha: String): TJSonObject;
@@ -667,6 +668,8 @@ end;
 function TDmGlobal.fListarPedidos(pDtUltSinc: String; pPagina, pCodUsuario: Integer): TJSonArray;
 var
   vSQLQuery: TFDQuery;
+  vPedidos : TJsonArray;
+  i        : Integer;
 begin
   if pDtUltSinc = '' then
     raise Exception.Create('Parâmetro dt_ult_sincronizacao não informado');
@@ -691,13 +694,39 @@ begin
 
     vSQLQuery.Active := True;
 
-    Result := vSQLQuery.ToJSONArray;
+    vPedidos := vSQLQuery.ToJSONArray;
+
+    for I := 0 to vPedidos.Size - 1 do
+      (vPedidos[i] as TJSONObject).AddPair('itens', fListarItensPedidos(vSQLQuery, vPedidos[i].GetValue<integer>('cod_pedido',0)));
+
+    Result := vPedidos;
 
   finally
     FreeAndNil(vSQLQuery);
 
   end;
 
+end;
+
+function TDmGlobal.fListarItensPedidos(pSQLQuery: TFDQuery; pCodPedido: Integer): TJSONArray;
+begin
+  pSQLQuery.Active := False;
+  pSQLQuery.SQL.Clear;
+
+  pSQLQuery.SQL.Text := ' SELECT                          ' +
+                        ' COD_ITEM,                       ' +
+                        ' COD_PRODUTO,                    ' +
+                        ' QTD,                            ' +
+                        ' VALOR_UNITARIO,                 ' +
+                        ' VALOR_TOTAL                     ' +
+                        ' FROM TAB_PEDIDO_ITEM            ' +
+                        ' WHERE COD_PEDIDO = :COD_PEDIDO  ' +
+                        ' ORDER BY COD_ITEM               ';
+
+  pSQLQuery.ParamByName('COD_PEDIDO').AsInteger  := pCodPedido;
+  pSQLQuery.Active := True;
+
+  Result := pSQLQuery.ToJSONArray;
 end;
 
 end.
