@@ -8,7 +8,7 @@ uses
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.FMXUI.Wait,
   Data.DB, FireDAC.Comp.Client, FireDAC.Phys.FB, FireDAC.Phys.FBDef,
   FireDAC.Phys.IBBase, System.IniFiles, FireDAC.VCLUI.Wait, System.JSON,
-  DataSet.Serialize, FireDac.DApt, uMD5;
+  DataSet.Serialize, FireDac.DApt, uMD5, FMX.Graphics;
 
 type
   TDmGlobal = class(TDataModule)
@@ -23,8 +23,6 @@ type
     function fInserirUsuario(pNome, pEmail, pSenha: String): TJSonObject;
     function fLogin(pEmail, pSenha: String): TJSonObject;
     procedure fPush(pCodUsuario:Integer; pTokenPush: String);
-    function fEditarUsuario(pCodUsuario: Integer; pNome,
-      pEmail: String): TJSonObject;
     function fEditarSenha(pCodUsuario: Integer; pSenha: String): TJSonObject;
     function fListarNotificacoes(pCodUsuario: Integer): TJSonArray;
     function fListarCondPagto: TJSonArray;
@@ -35,6 +33,13 @@ type
       pLimiteDisponivel: Double; pCodClienteOficial: Integer;
       pDtUltSincronizacao: String): TJSonObject;
     function fListarProdutos(pDtUltSinc: String; vPagina: Integer): TJSonArray;
+    function fEditarUsuario(pCodUsuario: Integer; pNome,
+      pEmail: String): TJSonObject;
+    function fInserirEditarProduto(pCodUsuario, pCodProdutoLocal: Integer;
+      pDescricao: String; pValor, pQtdEstoque: Double;
+      pCodProdutoOficial: Integer; pDtUltSincronizacao: String): TJSonObject;
+    procedure EditarFoto(pCodProduto: Integer; pFoto: TBitMap);
+    function fListarFoto(pCodProduto: Integer): TMemoryStream;
 
     { Public declarations }
   end;
@@ -536,6 +541,124 @@ begin
   finally
     FreeAndNil(vSQLQuery);
 
+  end;
+
+end;
+
+function TDmGlobal.fInserirEditarProduto(pCodUsuario, pCodProdutoLocal: Integer;
+                                        pDescricao: String; pValor, pQtdEstoque: Double;
+                                        pCodProdutoOficial: Integer; pDtUltSincronizacao: String): TJSonObject;
+var
+  vSQLQuery: TFDQuery;
+begin
+  vSQLQuery := TFDQuery.Create(nil);
+  try
+    vSQLQuery.Connection := Conn;
+
+    vSQLQuery.Active := False;
+    vSQLQuery.SQL.Clear;
+
+    if pCodProdutoOficial = 0 then
+    begin
+      vSQLQuery.SQL.Text := ' INSERT INTO TAB_PRODUTO                                                       '+
+                            ' (DESCRICAO, VALOR, QTD_ESTOQUE, COD_USUARIO, DATA_ULT_ALTERACAO)              '+
+                            ' VALUES (:DESCRICAO, :VALOR, :QTD_ESTOQUE, :COD_USUARIO, :DATA_ULT_ALTERACAO)  '+
+                            ' RETURNING COD_PRODUTO AS COD_PRODUTO_OFICIAL                                  ';
+
+      vSQLQuery.ParamByName('COD_USUARIO').AsInteger := pCodUsuario;
+    end
+    else
+    begin
+      vSQLQuery.SQL.Text := ' UPDATE TAB_PRODUTO                                                       '+
+                            ' SET DESCRICAO = :DESCRICAO, VALOR = :VALOR, QTD_ESTOQUE = :QTD_ESTOQUE,  '+
+                            ' DATA_ULT_ALTERACAO = :DATA_ULT_ALTERACAO                                 '+
+                            ' WHERE COD_PRODUTO = :COD_PRODUTO                                         '+
+                            ' RETURNING COD_PRODUTO AS COD_PRODUTO_OFICIAL                             ';
+
+      vSQLQuery.ParamByName('COD_PRODUTO').AsInteger := pCodProdutoOficial;
+    end;
+
+    vSQLQuery.ParamByName('DESCRICAO').AsString            := pDescricao;
+    vSQLQuery.ParamByName('VALOR').AsFloat                 := pValor;
+    vSQLQuery.ParamByName('QTD_ESTOQUE').AsFloat           := pQtdEstoque;
+    vSQLQuery.ParamByName('DATA_ULT_ALTERACAO').AsString   := pDtUltSincronizacao;
+
+    vSQLQuery.Active := True;
+    Result           := vSQLQuery.ToJSONObject;
+
+  finally
+    FreeAndNil(vSQLQuery);
+
+  end;
+
+end;
+
+procedure TDmGlobal.EditarFoto(pCodProduto:Integer; pFoto: TBitMap);
+var
+  vSQLQuery: TFDQuery;
+begin
+  if pCodProduto <= 0 then
+    raise Exception.Create('O parâmetro cod_produto não foi informado');
+
+  if pFoto = nil then
+    raise Exception.Create('O parâmetro foto não foi informado');
+
+  vSQLQuery := TFDQuery.Create(nil);
+  try
+    vSQLQuery.Connection := Conn;
+
+    vSQLQuery.Active := False;
+    vSQLQuery.SQL.Clear;
+
+    vSQLQuery.SQL.Text := ' UPDATE TAB_PRODUTO               ' +
+                          ' SET FOTO = :FOTO                 ' +
+                          ' WHERE COD_PRODUTO = :COD_PRODUTO ';
+
+    vSQLQuery.ParamByName('FOTO').Assign(pFoto);
+    vSQLQuery.ParamByName('COD_PRODUTO').AsInteger := pCodProduto;
+
+    vSQLQuery.ExecSQL;
+
+  finally
+    FreeAndNil(vSQLQuery);
+
+  end;
+
+end;
+
+
+function TDmGlobal.fListarFoto(pCodProduto: Integer): TMemoryStream;
+var
+  vSQLQuery: TFDQuery;
+  vStream  : TStream;
+begin
+  if pCodProduto <=0 then
+    raise Exception.Create('Parâmetro cod_produto não informado');
+
+  vSQLQuery := TFDQuery.Create(nil);
+  try
+    vSQLQuery.Connection := Conn;
+
+    vSQLQuery.Active := False;
+    vSQLQuery.SQL.Clear;
+
+    vSQLQuery.SQL.Text := ' SELECT FOTO FROM TAB_PRODUTO     '+
+                          ' WHERE COD_PRODUTO = :COD_PRODUTO ';
+
+    vSQLQuery.ParamByName('COD_PRODUTO').AsInteger  := pCodProduto;
+
+    vSQLQuery.Active := True;
+
+    if vSQLQuery.FieldByName('FOTO').AsString = '' then
+      raise Exception.Create('O produto não possui uma foto cadastrada');
+
+    vStream := vSQLQuery.CreateBlobStream(vSQLQuery.FieldByName('FOTO'), TBlobStreamMode.bmRead);
+    Result := TMemoryStream.Create;
+    Result.LoadFromStream(vStream);
+
+  finally
+    FreeAndNil(vSQLQuery);
+    FreeAndNil(vStream);
   end;
 
 end;

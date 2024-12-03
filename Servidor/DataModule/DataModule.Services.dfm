@@ -3,7 +3,7 @@ object DMServices: TDMServices
   Encoding = esUtf8
   OnUserTokenAuth = ServerMethodDataModuleUserTokenAuth
   QueuedRequest = False
-  Height = 292
+  Height = 152
   Width = 220
   object ServerEvents: TRESTDWServerEvents
     IgnoreInvalidParams = False
@@ -137,8 +137,39 @@ object DMServices: TDMServices
         CallbackEvent = False
         OnlyPreDefinedParams = False
         OnReplyEventByType = ServerEventsEventsproduto_sincronizacaoReplyEventByType
+      end
+      item
+        Routes = [crAll]
+        NeedAuthorization = True
+        Params = <>
+        DataMode = dmRAW
+        Name = 'editar_foto'
+        EventName = 'foto'
+        BaseURL = '/produtos/'
+        DefaultContentType = 'application/json'
+        CallbackEvent = False
+        OnlyPreDefinedParams = False
+        OnReplyEventByType = ServerEventsEventseditar_fotoReplyEventByType
       end>
     Left = 40
+    Top = 48
+  end
+  object ServerContext: TRESTDWServerContext
+    IgnoreInvalidParams = False
+    ContextList = <
+      item
+        Params = <>
+        ContentType = 'text/html'
+        Name = 'listar_foto'
+        BaseURL = '/'
+        ContextName = 'foto'
+        Routes = [crAll]
+        OnlyPreDefinedParams = False
+        IgnoreBaseHeader = False
+        NeedAuthorization = True
+        OnReplyRequestStream = ServerContextContextListlistar_fotoReplyRequestStream
+      end>
+    Left = 144
     Top = 48
   end
 end

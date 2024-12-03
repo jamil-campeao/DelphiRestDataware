@@ -2,8 +2,9 @@ unit uFunctions;
 
 interface
 
-uses System.JSON, System.SysUtils;
+uses System.JSON, System.SysUtils, System.NetEncoding, FMX.Graphics, System.Classes;
 
+function BitmapFromBase64(const base64: string): TBitmap;
 function CreateJsonObj(pairName: string; value: string): TJSONObject; overload;
 function CreateJsonObj(pairName: string; value: integer): TJSONObject; overload;
 function CreateJsonObj(pairName: string; value: double): TJSONObject; overload;
@@ -14,6 +15,36 @@ function ParseBody(body: string): TJsonValue;
 
 
 implementation
+
+function BitmapFromBase64(const base64: string): TBitmap;
+var
+  Input: TStringStream;
+  Output: TBytesStream;
+  Encoding: TBase64Encoding;
+begin
+  Input := TStringStream.Create(base64, TEncoding.UTF8);
+  try
+    Output := TBytesStream.Create;
+    try
+      Encoding := TBase64Encoding.Create(0);
+      Encoding.Decode(Input, Output);
+
+      Output.Position := 0;
+      Result := TBitmap.Create;
+      try
+        Result.LoadFromStream(Output);
+      except
+        Result.Free;
+        raise;
+      end;
+    finally
+      Encoding.DisposeOf;
+      Output.Free;
+    end;
+  finally
+    Input.Free;
+  end;
+end;
 
 function CreateJsonObj(pairName: string; value: string): TJSONObject;
 begin

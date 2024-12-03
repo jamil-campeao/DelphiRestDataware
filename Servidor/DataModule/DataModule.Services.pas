@@ -5,11 +5,12 @@ interface
 uses
   System.SysUtils, System.Classes, uRESTDWDatamodule, uRESTDWComponentBase,
   uRESTDWServerEvents, uRESTDWParams, uRESTDWConsts, DataSet.Serialize.Config,
-  uRESTDWDataUtils;
+  uRESTDWDataUtils, uRESTDWServerContext;
 
 type
   TDMServices = class(TServerMethodDataModule)
     ServerEvents: TRESTDWServerEvents;
+    ServerContext: TRESTDWServerContext;
     procedure ServerEventsEventsusuariosReplyEventByType(
       var Params: TRESTDWParams; var Result: string;
       const RequestType: TRequestType; var StatusCode: Integer;
@@ -52,6 +53,14 @@ type
       var Params: TRESTDWParams; var Result: string;
       const RequestType: TRequestType; var StatusCode: Integer;
       RequestHeader: TStringList);
+    procedure ServerEventsEventseditar_fotoReplyEventByType(
+      var Params: TRESTDWParams; var Result: string;
+      const RequestType: TRequestType; var StatusCode: Integer;
+      RequestHeader: TStringList);
+    procedure ServerContextContextListlistar_fotoReplyRequestStream(
+      const Params: TRESTDWParams; var ContentType: string;
+      const Result: TMemoryStream; const RequestType: TRequestType;
+      var StatusCode: Integer);
   private
     { Private declarations }
   public
@@ -70,6 +79,16 @@ Controllers.CondPagto, Controllers.Cliente, Controllers.Produto;
 
 {$R *.dfm}
 
+procedure TDMServices.ServerContextContextListlistar_fotoReplyRequestStream(
+  const Params: TRESTDWParams; var ContentType: string;
+  const Result: TMemoryStream; const RequestType: TRequestType;
+  var StatusCode: Integer);
+begin
+  //GET: /PRODUTOS/FOTO/123
+  Controllers.Produto.RegistrarRotasFotoStream(Params, ContentType, Result, RequestType, StatusCode);
+
+end;
+
 procedure TDMServices.ServerEventsEventscond_pagtoReplyEventByType(
   var Params: TRESTDWParams; var Result: string;
   const RequestType: TRequestType; var StatusCode: Integer;
@@ -77,6 +96,16 @@ procedure TDMServices.ServerEventsEventscond_pagtoReplyEventByType(
 begin
   //GET: /COND-PAGTO
   Controllers.CondPagto.RegistrarRotas(Params, Result, RequestType, StatusCode, RequestHeader);
+
+end;
+
+procedure TDMServices.ServerEventsEventseditar_fotoReplyEventByType(
+  var Params: TRESTDWParams; var Result: string;
+  const RequestType: TRequestType; var StatusCode: Integer;
+  RequestHeader: TStringList);
+begin
+  //PUT: /PRODUTOS/FOTO/123
+  Controllers.Produto.RegistrarRotasFoto(Params, Result, RequestType, StatusCode, RequestHeader);
 
 end;
 
