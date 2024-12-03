@@ -124,6 +124,19 @@ object DMServices: TDMServices
         CallbackEvent = False
         OnlyPreDefinedParams = False
         OnReplyEventByType = ServerEventsEventssincronizacaoReplyEventByType
+      end
+      item
+        Routes = [crAll]
+        NeedAuthorization = True
+        Params = <>
+        DataMode = dmRAW
+        Name = 'produto_sincronizacao'
+        EventName = 'sincronizacaoprod'
+        BaseURL = '/produtos/'
+        DefaultContentType = 'application/json'
+        CallbackEvent = False
+        OnlyPreDefinedParams = False
+        OnReplyEventByType = ServerEventsEventsproduto_sincronizacaoReplyEventByType
       end>
     Left = 40
     Top = 48

@@ -12,7 +12,8 @@ uses
   uMD5 in 'Units\uMD5.pas',
   Controllers.Notificacao in 'Controller\Controllers.Notificacao.pas',
   Controllers.CondPagto in 'Controller\Controllers.CondPagto.pas',
-  Controllers.Cliente in 'Controller\Controllers.Cliente.pas';
+  Controllers.Cliente in 'Controller\Controllers.Cliente.pas',
+  Controllers.Produto in 'Controller\Controllers.Produto.pas';
 
 {$R *.res}
 

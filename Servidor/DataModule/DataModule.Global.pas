@@ -34,6 +34,7 @@ type
       pCidade, pUF, pCEP: String; pLatitude, pLongitude,
       pLimiteDisponivel: Double; pCodClienteOficial: Integer;
       pDtUltSincronizacao: String): TJSonObject;
+    function fListarProdutos(pDtUltSinc: String; vPagina: Integer): TJSonArray;
 
     { Public declarations }
   end;
@@ -43,6 +44,7 @@ var
 
 const
   cQTD_REG_PAG_CLIENTE = 5;
+  cQTD_REG_PAG_PRODUTO = 5;
 
 implementation
 
@@ -498,6 +500,45 @@ begin
 
 end;
 
+function TDmGlobal.fListarProdutos(pDtUltSinc: String; vPagina: Integer): TJSonArray;
+var
+  vSQLQuery: TFDQuery;
+begin
+  if pDtUltSinc = '' then
+    raise Exception.Create('Parâmetro dt_ult_sincronizao não informado');
+
+  vSQLQuery := TFDQuery.Create(nil);
+  try
+    vSQLQuery.Connection := Conn;
+
+    vSQLQuery.Active := False;
+    vSQLQuery.SQL.Clear;
+
+    vSQLQuery.SQL.Text := ' SELECT FIRST :FIRST SKIP :SKIP                 '+
+                          ' COD_PRODUTO,                                   '+
+                          ' DESCRICAO,                                     '+
+                          ' VALOR,                                         '+
+                          ' QTD_ESTOQUE,                                   '+
+                          ' COD_USUARIO,                                   '+
+                          ' DATA_ULT_ALTERACAO                             '+
+                          ' FROM TAB_PRODUTO                               '+
+                          ' WHERE DATA_ULT_ALTERACAO > :DATA_ULT_ALTERACAO '+
+                          ' ORDER BY COD_PRODUTO                           ';
+
+    vSQLQuery.ParamByName('DATA_ULT_ALTERACAO').AsString  := pDtUltSinc;
+    vSQLQuery.ParamByName('FIRST').AsInteger              := cQTD_REG_PAG_PRODUTO;
+    vSQLQuery.ParamByName('SKIP').AsInteger               := (vPagina * cQTD_REG_PAG_PRODUTO) - cQTD_REG_PAG_PRODUTO;
+
+    vSQLQuery.Active := True;
+
+    Result := vSQLQuery.ToJSONArray;
+
+  finally
+    FreeAndNil(vSQLQuery);
+
+  end;
+
+end;
 
 
 end.
