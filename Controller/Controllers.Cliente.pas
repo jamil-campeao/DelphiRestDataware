@@ -30,6 +30,7 @@ var
   vDMGlobal   : TDmGlobal;
   vJson       : TJsonArray;
   vDtUltSinc  : String;
+  vPagina     : Integer;
 begin
   try
     try
@@ -40,7 +41,13 @@ begin
         vDtUltSinc := '';
       end;
 
-      vJson := vDmGlobal.fListarClientes(vDtUltSinc);
+      try
+        vPagina := Params.ItemsString['pagina'].AsInteger;
+      except
+        vPagina := 1;
+      end;
+
+      vJson := vDmGlobal.fListarClientes(vDtUltSinc, vPagina);
 
       Result := vJson.ToJson;
       StatusCode := 200;

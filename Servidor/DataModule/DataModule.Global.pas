@@ -28,13 +28,16 @@ type
     function fEditarSenha(pCodUsuario: Integer; pSenha: String): TJSonObject;
     function fListarNotificacoes(pCodUsuario: Integer): TJSonArray;
     function fListarCondPagto: TJSonArray;
-    function fListarClientes(pDtUltSinc: String): TJSonArray;
+    function fListarClientes(pDtUltSinc: String; vPagina: Integer): TJSonArray;
 
     { Public declarations }
   end;
 
 var
   DmGlobal: TDmGlobal;
+
+const
+  cQTD_REG_PAG_CLIENTE = 5;
 
 implementation
 
@@ -390,7 +393,7 @@ begin
 
 end;
 
-function TDmGlobal.fListarClientes(pDtUltSinc: String): TJSonArray;
+function TDmGlobal.fListarClientes(pDtUltSinc: String; vPagina: Integer): TJSonArray;
 var
   vSQLQuery: TFDQuery;
 begin
@@ -404,12 +407,15 @@ begin
     vSQLQuery.Active := False;
     vSQLQuery.SQL.Clear;
 
-    vSQLQuery.SQL.Text := ' SELECT *                                       ' +
+    vSQLQuery.SQL.Text := ' SELECT FIRST :FIRST SKIP :SKIP *               ' +
                           ' FROM TAB_CLIENTE                               ' +
                           ' WHERE DATA_ULT_ALTERACAO > :DATA_ULT_ALTERACAO ' +
                           ' ORDER BY COD_CLIENTE                           ';
 
-    vSQLQuery.ParamByName('DATA_ULT_ALTERACAO').AsString := pDtUltSinc;
+    vSQLQuery.ParamByName('DATA_ULT_ALTERACAO').AsString  := pDtUltSinc;
+    vSQLQuery.ParamByName('FIRST').AsInteger              := cQTD_REG_PAG_CLIENTE;
+    vSQLQuery.ParamByName('SKIP').AsInteger               := (vPagina * cQTD_REG_PAG_CLIENTE) - cQTD_REG_PAG_CLIENTE;
+
     vSQLQuery.Active := True;
 
     Result := vSQLQuery.ToJSONArray;
