@@ -61,6 +61,10 @@ type
       const Params: TRESTDWParams; var ContentType: string;
       const Result: TMemoryStream; const RequestType: TRequestType;
       var StatusCode: Integer);
+    procedure ServerEventsEventspedido_sincronizacaoReplyEventByType(
+      var Params: TRESTDWParams; var Result: string;
+      const RequestType: TRequestType; var StatusCode: Integer;
+      RequestHeader: TStringList);
   private
     { Private declarations }
   public
@@ -75,7 +79,7 @@ implementation
 {%CLASSGROUP 'FMX.Controls.TControl'}
 
 uses Controllers.Usuario, Controllers.Auth, Controllers.Notificacao,
-Controllers.CondPagto, Controllers.Cliente, Controllers.Produto;
+Controllers.CondPagto, Controllers.Cliente, Controllers.Produto, Controllers.Pedido;
 
 {$R *.dfm}
 
@@ -135,6 +139,16 @@ procedure TDMServices.ServerEventsEventsnotificacoesReplyEventByType(
 begin
   //GET /NOTIFICACOES
   Controllers.Notificacao.RegistrarRotas(Params, Result, RequestType, StatusCode, RequestHeader);
+
+end;
+
+procedure TDMServices.ServerEventsEventspedido_sincronizacaoReplyEventByType(
+  var Params: TRESTDWParams; var Result: string;
+  const RequestType: TRequestType; var StatusCode: Integer;
+  RequestHeader: TStringList);
+begin
+  //GET, POST /PEDIDOS/SINCRONIZACAO
+  Controllers.Pedido.RegistrarRotas(Params, Result, RequestType, StatusCode, RequestHeader);
 
 end;
 

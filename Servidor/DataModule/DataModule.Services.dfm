@@ -150,6 +150,19 @@ object DMServices: TDMServices
         CallbackEvent = False
         OnlyPreDefinedParams = False
         OnReplyEventByType = ServerEventsEventseditar_fotoReplyEventByType
+      end
+      item
+        Routes = [crAll]
+        NeedAuthorization = True
+        Params = <>
+        DataMode = dmRAW
+        Name = 'pedido_sincronizacao'
+        EventName = 'sincronizacaoped'
+        BaseURL = '/pedidos/'
+        DefaultContentType = 'application/json'
+        CallbackEvent = False
+        OnlyPreDefinedParams = False
+        OnReplyEventByType = ServerEventsEventspedido_sincronizacaoReplyEventByType
       end>
     Left = 40
     Top = 48

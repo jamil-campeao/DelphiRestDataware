@@ -40,6 +40,8 @@ type
       pCodProdutoOficial: Integer; pDtUltSincronizacao: String): TJSonObject;
     procedure EditarFoto(pCodProduto: Integer; pFoto: TBitMap);
     function fListarFoto(pCodProduto: Integer): TMemoryStream;
+    function fListarPedidos(pDtUltSinc: String; pPagina, pCodUsuario: Integer): TJSonArray;
+
     { Public declarations }
   end;
 
@@ -49,6 +51,7 @@ var
 const
   cQTD_REG_PAG_CLIENTE = 5;
   cQTD_REG_PAG_PRODUTO = 5;
+  cQTD_REG_PAG_PEDIDO = 5;
 
 implementation
 
@@ -657,6 +660,42 @@ begin
   finally
     FreeAndNil(vSQLQuery);
     FreeAndNil(vStream);
+  end;
+
+end;
+
+function TDmGlobal.fListarPedidos(pDtUltSinc: String; pPagina, pCodUsuario: Integer): TJSonArray;
+var
+  vSQLQuery: TFDQuery;
+begin
+  if pDtUltSinc = '' then
+    raise Exception.Create('Parâmetro dt_ult_sincronizacao não informado');
+
+  vSQLQuery := TFDQuery.Create(nil);
+  try
+    vSQLQuery.Connection := Conn;
+
+    vSQLQuery.Active := False;
+    vSQLQuery.SQL.Clear;
+
+    vSQLQuery.SQL.Text := ' SELECT FIRST :FIRST SKIP :SKIP *               ' +
+                          ' FROM TAB_PEDIDO                                ' +
+                          ' WHERE DATA_ULT_ALTERACAO > :DATA_ULT_ALTERACAO ' +
+                          ' AND COD_USUARIO = :COD_USUARIO                 ' +
+                          ' ORDER BY COD_PEDIDO                            ';
+
+    vSQLQuery.ParamByName('DATA_ULT_ALTERACAO').AsString  := pDtUltSinc;
+    vSQLQuery.ParamByName('FIRST').AsInteger              := cQTD_REG_PAG_PEDIDO;
+    vSQLQuery.ParamByName('SKIP').AsInteger               := (pPagina * cQTD_REG_PAG_PEDIDO) - cQTD_REG_PAG_PEDIDO;
+    vSQLQuery.ParamByName('COD_USUARIO').AsInteger        := pCodUsuario;
+
+    vSQLQuery.Active := True;
+
+    Result := vSQLQuery.ToJSONArray;
+
+  finally
+    FreeAndNil(vSQLQuery);
+
   end;
 
 end;

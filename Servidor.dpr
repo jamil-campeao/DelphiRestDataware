@@ -13,7 +13,8 @@ uses
   Controllers.Notificacao in 'Controller\Controllers.Notificacao.pas',
   Controllers.CondPagto in 'Controller\Controllers.CondPagto.pas',
   Controllers.Cliente in 'Controller\Controllers.Cliente.pas',
-  Controllers.Produto in 'Controller\Controllers.Produto.pas';
+  Controllers.Produto in 'Controller\Controllers.Produto.pas',
+  Controllers.Pedido in 'Controller\Controllers.Pedido.pas';
 
 {$R *.res}
 
