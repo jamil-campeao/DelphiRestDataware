@@ -92,31 +92,20 @@ begin
 
       vBody  := ParseBody(Params.RawBody.AsString);
 
-      vJson := vDmGlobal.fInserirEditarCliente(vCodUsuario,
-                                               vBody.GetValue<integer>('cod_cliente_local',0),
-                                               vBody.GetValue<string>('cnpj_cpf',''),
-                                               vBody.GetValue<string>('nome',''),
-                                               vBody.GetValue<string>('fone',''),
-                                               vBody.GetValue<string>('email',''),
-                                               vBody.GetValue<string>('endereco',''),
-                                               vBody.GetValue<string>('numero',''),
-                                               vBody.GetValue<string>('complemento',''),
-                                               vBody.GetValue<string>('bairro',''),
-                                               vBody.GetValue<string>('cidade',''),
-                                               vBody.GetValue<string>('uf',''),
-                                               vBody.GetValue<string>('cep',''),
-                                               vBody.GetValue<double>('latitude',0),
-                                               vBody.GetValue<double>('longitude',0),
-                                               vBody.GetValue<integer>('limite_disponivel',0),
-                                               vBody.GetValue<integer>('cod_cliente_oficial',0),
+      vJson := vDmGlobal.fInserirEditarProduto(vCodUsuario,
+                                               vBody.GetValue<integer>('cod_produto_local',0),
+                                               vBody.GetValue<string>('descricao',''),
+                                               vBody.GetValue<double>('valor',0),
+                                               vBody.GetValue<double>('qtd_estoque',0),
+                                               vBody.GetValue<integer>('cod_produto_oficial',0),
                                                vBody.GetValue<string>('dt_ult_sincronizacao','')
                                               );
-      vJson.AddPair('cod_cliente_local', TJSONNumber.Create(vBody.GetValue<integer>('cod_cliente_local',0)));
+      vJson.AddPair('cod_produto_local', TJSONNumber.Create(vBody.GetValue<integer>('cod_produto_local',0)));
 
       Result := vJson.ToJSON;
       FreeAndNil(vJson);
       FreeAndNil(vBody);
-      StatusCode := 201;
+      StatusCode := 200;
 
     except on e:Exception do
       begin

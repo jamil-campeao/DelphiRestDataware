@@ -23,8 +23,6 @@ type
     function fInserirUsuario(pNome, pEmail, pSenha: String): TJSonObject;
     function fLogin(pEmail, pSenha: String): TJSonObject;
     procedure fPush(pCodUsuario:Integer; pTokenPush: String);
-    function fEditarUsuario(pCodUsuario: Integer; pNome,
-      pEmail: String): TJSonObject;
     function fEditarSenha(pCodUsuario: Integer; pSenha: String): TJSonObject;
     function fListarNotificacoes(pCodUsuario: Integer): TJSonArray;
     function fListarCondPagto: TJSonArray;
@@ -35,6 +33,11 @@ type
       pLimiteDisponivel: Double; pCodClienteOficial: Integer;
       pDtUltSincronizacao: String): TJSonObject;
     function fListarProdutos(pDtUltSinc: String; vPagina: Integer): TJSonArray;
+    function fEditarUsuario(pCodUsuario: Integer; pNome,
+      pEmail: String): TJSonObject;
+    function fInserirEditarProduto(pCodUsuario, pCodProdutoLocal: Integer;
+      pDescricao: String; pValor, pQtdEstoque: Double;
+      pCodProdutoOficial: Integer; pDtUltSincronizacao: String): TJSonObject;
 
     { Public declarations }
   end;
@@ -532,6 +535,54 @@ begin
     vSQLQuery.Active := True;
 
     Result := vSQLQuery.ToJSONArray;
+
+  finally
+    FreeAndNil(vSQLQuery);
+
+  end;
+
+end;
+
+function TDmGlobal.fInserirEditarProduto(pCodUsuario, pCodProdutoLocal: Integer;
+                                        pDescricao: String; pValor, pQtdEstoque: Double;
+                                        pCodProdutoOficial: Integer; pDtUltSincronizacao: String): TJSonObject;
+var
+  vSQLQuery: TFDQuery;
+begin
+  vSQLQuery := TFDQuery.Create(nil);
+  try
+    vSQLQuery.Connection := Conn;
+
+    vSQLQuery.Active := False;
+    vSQLQuery.SQL.Clear;
+
+    if pCodProdutoOficial = 0 then
+    begin
+      vSQLQuery.SQL.Text := ' INSERT INTO TAB_PRODUTO                                                       '+
+                            ' (DESCRICAO, VALOR, QTD_ESTOQUE, COD_USUARIO, DATA_ULT_ALTERACAO)              '+
+                            ' VALUES (:DESCRICAO, :VALOR, :QTD_ESTOQUE, :COD_USUARIO, :DATA_ULT_ALTERACAO)  '+
+                            ' RETURNING COD_PRODUTO AS COD_PRODUTO_OFICIAL                                  ';
+
+      vSQLQuery.ParamByName('COD_USUARIO').AsInteger := pCodUsuario;
+    end
+    else
+    begin
+      vSQLQuery.SQL.Text := ' UPDATE TAB_PRODUTO                                                       '+
+                            ' SET DESCRICAO = :DESCRICAO, VALOR = :VALOR, QTD_ESTOQUE = :QTD_ESTOQUE,  '+
+                            ' DATA_ULT_ALTERACAO = :DATA_ULT_ALTERACAO                                 '+
+                            ' WHERE COD_PRODUTO = :COD_PRODUTO                                         '+
+                            ' RETURNING COD_PRODUTO AS COD_PRODUTO_OFICIAL                             ';
+
+      vSQLQuery.ParamByName('COD_PRODUTO').AsInteger := pCodProdutoOficial;
+    end;
+
+    vSQLQuery.ParamByName('DESCRICAO').AsString            := pDescricao;
+    vSQLQuery.ParamByName('VALOR').AsFloat                 := pValor;
+    vSQLQuery.ParamByName('QTD_ESTOQUE').AsFloat           := pQtdEstoque;
+    vSQLQuery.ParamByName('DATA_ULT_ALTERACAO').AsString   := pDtUltSincronizacao;
+
+    vSQLQuery.Active := True;
+    Result           := vSQLQuery.ToJSONObject;
 
   finally
     FreeAndNil(vSQLQuery);
