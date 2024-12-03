@@ -3,9 +3,14 @@ unit Controllers.Produto;
 interface
 
 uses System.JSON, uRESTDWConsts, uRESTDWParams, System.Classes,
-System.SysUtils, DataModule.Global, uFunctions, Controllers.Auth;
+System.SysUtils, DataModule.Global, uFunctions, Controllers.Auth,
+FMX.Graphics;
 
 procedure RegistrarRotas(var Params: TRESTDWParams; var Result: string;
+  const RequestType: TRequestType; var StatusCode: Integer;
+  RequestHeader: TStringList);
+
+procedure RegistrarRotasFoto(var Params: TRESTDWParams; var Result: string;
   const RequestType: TRequestType; var StatusCode: Integer;
   RequestHeader: TStringList);
 
@@ -14,6 +19,10 @@ procedure ListarProdutos(var Params: TRESTDWParams; var Result: string;
   RequestHeader: TStringList);
 
 procedure InserirEditarProduto(var Params: TRESTDWParams; var Result: string;
+  const RequestType: TRequestType; var StatusCode: Integer;
+  RequestHeader: TStringList);
+
+procedure EditarFoto(var Params: TRESTDWParams; var Result: string;
   const RequestType: TRequestType; var StatusCode: Integer;
   RequestHeader: TStringList);
 
@@ -31,6 +40,15 @@ begin
     InserirEditarProduto(Params, Result, RequestType, StatusCode, RequestHeader);
 
 end;
+
+procedure RegistrarRotasFoto(var Params: TRESTDWParams; var Result: string;
+  const RequestType: TRequestType; var StatusCode: Integer;
+  RequestHeader: TStringList);
+begin
+  if RequestType = rtPut then
+    EditarFoto(Params, Result, RequestType, StatusCode, RequestHeader)
+  end;
+
 
 procedure ListarProdutos(var Params: TRESTDWParams; var Result: string;
   const RequestType: TRequestType; var StatusCode: Integer;
@@ -121,5 +139,50 @@ begin
   end;
 end;
 
+procedure EditarFoto(var Params: TRESTDWParams; var Result: string;
+  const RequestType: TRequestType; var StatusCode: Integer;
+  RequestHeader: TStringList);
+var
+  vCodProduto: Integer;
+  vDMGlobal: TDmGlobal;
+  vBody: System.JSON.TJSONValue;
+  vFoto : TBitmap;
+begin
+  try
+    try
+      vDMGlobal := TDMGlobal.Create(nil);
+      try
+        vCodProduto := Params.ItemsString['0'].AsInteger;
+      except
+        vCodProduto := 0;
+      end;
+
+      vBody := ParseBody(Params.RawBody.AsString);
+      if vBody.GetValue<string>('foto64','') = '' then
+      begin
+        raise Exception.Create('Parâmetro foto64 não informado');
+      end;
+
+      vFoto := BitmapFromBase64(vBody.GetValue<string>('foto64',''));
+      vDmGlobal.EditarFoto(vCodProduto, vFoto);
+
+      Result := 'Foto alterada com sucesso';
+      StatusCode := 200;
+
+    except on e:Exception do
+      begin
+        StatusCode := 500;
+        Result := e.Message;
+      end;
+
+    end;
+
+  finally
+    FreeAndNil(vDMGlobal);
+    FreeAndNil(vBody);
+    FreeAndNil(vFoto);
+
+  end;
+end;
 
 end.

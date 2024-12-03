@@ -52,6 +52,10 @@ type
       var Params: TRESTDWParams; var Result: string;
       const RequestType: TRequestType; var StatusCode: Integer;
       RequestHeader: TStringList);
+    procedure ServerEventsEventseditar_fotoReplyEventByType(
+      var Params: TRESTDWParams; var Result: string;
+      const RequestType: TRequestType; var StatusCode: Integer;
+      RequestHeader: TStringList);
   private
     { Private declarations }
   public
@@ -77,6 +81,16 @@ procedure TDMServices.ServerEventsEventscond_pagtoReplyEventByType(
 begin
   //GET: /COND-PAGTO
   Controllers.CondPagto.RegistrarRotas(Params, Result, RequestType, StatusCode, RequestHeader);
+
+end;
+
+procedure TDMServices.ServerEventsEventseditar_fotoReplyEventByType(
+  var Params: TRESTDWParams; var Result: string;
+  const RequestType: TRequestType; var StatusCode: Integer;
+  RequestHeader: TStringList);
+begin
+  //PUT: /PRODUTOS/FOTO/123
+  Controllers.Produto.RegistrarRotasFoto(Params, Result, RequestType, StatusCode, RequestHeader);
 
 end;
 

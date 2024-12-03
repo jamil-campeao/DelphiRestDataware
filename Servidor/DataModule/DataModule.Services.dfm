@@ -137,6 +137,19 @@ object DMServices: TDMServices
         CallbackEvent = False
         OnlyPreDefinedParams = False
         OnReplyEventByType = ServerEventsEventsproduto_sincronizacaoReplyEventByType
+      end
+      item
+        Routes = [crAll]
+        NeedAuthorization = True
+        Params = <>
+        DataMode = dmRAW
+        Name = 'editar_foto'
+        EventName = 'foto'
+        BaseURL = '/produtos/'
+        DefaultContentType = 'application/json'
+        CallbackEvent = False
+        OnlyPreDefinedParams = False
+        OnReplyEventByType = ServerEventsEventseditar_fotoReplyEventByType
       end>
     Left = 40
     Top = 48

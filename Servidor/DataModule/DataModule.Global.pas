@@ -8,7 +8,7 @@ uses
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.FMXUI.Wait,
   Data.DB, FireDAC.Comp.Client, FireDAC.Phys.FB, FireDAC.Phys.FBDef,
   FireDAC.Phys.IBBase, System.IniFiles, FireDAC.VCLUI.Wait, System.JSON,
-  DataSet.Serialize, FireDac.DApt, uMD5;
+  DataSet.Serialize, FireDac.DApt, uMD5, FMX.Graphics;
 
 type
   TDmGlobal = class(TDataModule)
@@ -38,6 +38,7 @@ type
     function fInserirEditarProduto(pCodUsuario, pCodProdutoLocal: Integer;
       pDescricao: String; pValor, pQtdEstoque: Double;
       pCodProdutoOficial: Integer; pDtUltSincronizacao: String): TJSonObject;
+    procedure EditarFoto(pCodProduto: Integer; pFoto: TBitMap);
 
     { Public declarations }
   end;
@@ -583,6 +584,39 @@ begin
 
     vSQLQuery.Active := True;
     Result           := vSQLQuery.ToJSONObject;
+
+  finally
+    FreeAndNil(vSQLQuery);
+
+  end;
+
+end;
+
+procedure TDmGlobal.EditarFoto(pCodProduto:Integer; pFoto: TBitMap);
+var
+  vSQLQuery: TFDQuery;
+begin
+  if pCodProduto <= 0 then
+    raise Exception.Create('O parâmetro cod_produto não foi informado');
+
+  if pFoto = nil then
+    raise Exception.Create('O parâmetro foto não foi informado');
+
+  vSQLQuery := TFDQuery.Create(nil);
+  try
+    vSQLQuery.Connection := Conn;
+
+    vSQLQuery.Active := False;
+    vSQLQuery.SQL.Clear;
+
+    vSQLQuery.SQL.Text := ' UPDATE TAB_PRODUTO               ' +
+                          ' SET FOTO = :FOTO                 ' +
+                          ' WHERE COD_PRODUTO = :COD_PRODUTO ';
+
+    vSQLQuery.ParamByName('FOTO').Assign(pFoto);
+    vSQLQuery.ParamByName('COD_PRODUTO').AsInteger := pCodProduto;
+
+    vSQLQuery.ExecSQL;
 
   finally
     FreeAndNil(vSQLQuery);
