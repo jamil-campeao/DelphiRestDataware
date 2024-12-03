@@ -117,7 +117,7 @@ object DMServices: TDMServices
         NeedAuthorization = True
         Params = <>
         DataMode = dmRAW
-        Name = 'sincronizacao'
+        Name = 'cliente_sincronizacao'
         EventName = 'sincronizacao'
         BaseURL = '/clientes/'
         DefaultContentType = 'application/json'

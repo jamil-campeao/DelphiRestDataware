@@ -29,6 +29,11 @@ type
     function fListarNotificacoes(pCodUsuario: Integer): TJSonArray;
     function fListarCondPagto: TJSonArray;
     function fListarClientes(pDtUltSinc: String; vPagina: Integer): TJSonArray;
+    function fInserirEditarCliente(pCodUsuario, pCodClienteLocal: Integer;
+      pCnpjCpf, pNome, pFone, pEmail, pEndereco, pNumero, pComplemento, pBairro,
+      pCidade, pUF, pCEP: String; pLatitude, pLongitude,
+      pLimiteDisponivel: Double; pCodClienteOficial: Integer;
+      pDtUltSincronizacao: String): TJSonObject;
 
     { Public declarations }
   end;
@@ -419,6 +424,72 @@ begin
     vSQLQuery.Active := True;
 
     Result := vSQLQuery.ToJSONArray;
+
+  finally
+    FreeAndNil(vSQLQuery);
+
+  end;
+
+end;
+
+function TDmGlobal.fInserirEditarCliente(pCodUsuario, pCodClienteLocal: Integer;
+                                        pCnpjCpf, pNome, pFone, pEmail, pEndereco,
+                                        pNumero, pComplemento, pBairro, pCidade, pUF, pCEP: String;
+                                        pLatitude, pLongitude, pLimiteDisponivel: Double;
+                                        pCodClienteOficial: Integer; pDtUltSincronizacao: String): TJSonObject;
+var
+  vSQLQuery: TFDQuery;
+begin
+  vSQLQuery := TFDQuery.Create(nil);
+  try
+    vSQLQuery.Connection := Conn;
+
+    vSQLQuery.Active := False;
+    vSQLQuery.SQL.Clear;
+
+    if pCodClienteOficial = 0 then
+    begin
+      vSQLQuery.SQL.Text := ' INSERT INTO TAB_CLIENTE                                                                      '+
+                            ' (COD_USUARIO, CNPJ_CPF, NOME, FONE, EMAIL, ENDERECO, NUMERO, COMPLEMENTO,                    '+
+                            ' BAIRRO, CIDADE, UF, CEP, LATITUDE, LONGITUDE, LIMITE_DISPONIVEL, DATA_ULT_ALTERACAO)         '+
+                            ' VALUES (:COD_USUARIO, :CNPJ_CPF, :NOME, :FONE, :EMAIL, :ENDERECO, :NUMERO, :COMPLEMENTO,     '+
+                            ' :BAIRRO, :CIDADE, :UF, :CEP, :LATITUDE, :LONGITUDE, :LIMITE_DISPONIVEL, :DATA_ULT_ALTERACAO) '+
+                            ' RETURNING COD_CLIENTE AS COD_CLIENTE_OFICIAL                                                 ';
+
+      vSQLQuery.ParamByName('COD_USUARIO').AsInteger := pCodUsuario;
+    end
+    else
+    begin
+      vSQLQuery.SQL.Text := ' UPDATE TAB_CLIENTE                                                               '+
+                            ' SET CNPJ_CPF = :CNPJ_CPF, NOME = :NOME, FONE = :FONE,                            '+
+                            ' EMAIL = :EMAIL, ENDERECO = :ENDERECO, NUMERO = :NUMERO,                          '+
+                            ' COMPLEMENTO = :COMPLEMENTO, BAIRRO = :BAIRRO, CIDADE = :CIDADE,                  '+
+                            ' UF = :UF, CEP = :CEP, LATITUDE = :LATITUDE, LONGITUDE = :LONGITUDE,              '+
+                            ' LIMITE_DISPONIVEL = :LIMITE_DISPONIVEL, DATA_ULT_ALTERACAO = :DATA_ULT_ALTERACAO '+
+                            ' WHERE COD_CLIENTE = :COD_CLIENTE                                                 '+
+                            ' RETURNING COD_CLIENTE AS COD_CLIENTE_OFICIAL                                     ';
+
+      vSQLQuery.ParamByName('COD_CLIENTE').AsInteger := pCodClienteOficial;
+    end;
+
+    vSQLQuery.ParamByName('CNPJ_CPF').AsString            := pCnpjCpf;
+    vSQLQuery.ParamByName('NOME').AsString                := pNome;
+    vSQLQuery.ParamByName('FONE').AsString                := pFone;
+    vSQLQuery.ParamByName('EMAIL').AsString               := pEmail;
+    vSQLQuery.ParamByName('ENDERECO').AsString            := pEndereco;
+    vSQLQuery.ParamByName('NUMERO').AsString              := pNumero;
+    vSQLQuery.ParamByName('COMPLEMENTO').AsString         := pComplemento;
+    vSQLQuery.ParamByName('BAIRRO').AsString              := pBairro;
+    vSQLQuery.ParamByName('CIDADE').AsString              := pCidade;
+    vSQLQuery.ParamByName('UF').AsString                  := pUF;
+    vSQLQuery.ParamByName('CEP').AsString                 := pCEP;
+    vSQLQuery.ParamByName('LATITUDE').AsFloat             := pLatitude;
+    vSQLQuery.ParamByName('LONGITUDE').AsFloat            := pLongitude;
+    vSQLQuery.ParamByName('LIMITE_DISPONIVEL').AsFloat    := pLimiteDisponivel;
+    vSQLQuery.ParamByName('DATA_ULT_ALTERACAO').AsString  := pDtUltSincronizacao;
+
+    vSQLQuery.Active := True;
+    Result           := vSQLQuery.ToJSONObject;
 
   finally
     FreeAndNil(vSQLQuery);
