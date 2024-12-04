@@ -88,6 +88,7 @@ var
   vDMGlobal: TDmGlobal;
   vBody: System.JSON.TJSONValue;
   vJson: TJSONObject;
+  vItens: TJsonArray;
 begin
   try
     try
@@ -95,6 +96,7 @@ begin
       vCodUsuario := fGetUsuarioRequest;
 
       vBody  := ParseBody(Params.RawBody.AsString);
+      vItens := vBody.GetValue<TJSONArray>('itens');
 
       vJson := vDmGlobal.fInserirEditarPedido(vCodUsuario,
                                              vBody.GetValue<integer>('cod_pedido_local',0),
@@ -108,7 +110,8 @@ begin
                                              vBody.GetValue<string>('prazo_entrega',''),
                                              vBody.GetValue<string>('data_entrega',''),
                                              vBody.GetValue<integer>('cod_pedido_oficial',0),
-                                             vBody.GetValue<string>('dt_ult_sincronizacao','')
+                                             vBody.GetValue<string>('dt_ult_sincronizacao',''),
+                                             vItens
                                              );
       vJson.AddPair('cod_pedido_local', TJSONNumber.Create(vBody.GetValue<integer>('cod_pedido_local',0)));
 
