@@ -96,15 +96,21 @@ begin
 
       vBody  := ParseBody(Params.RawBody.AsString);
 
-      vJson := vDmGlobal.fInserirEditarProduto(vCodUsuario,
-                                               vBody.GetValue<integer>('cod_produto_local',0),
-                                               vBody.GetValue<string>('descricao',''),
-                                               vBody.GetValue<double>('valor',0),
-                                               vBody.GetValue<double>('qtd_estoque',0),
-                                               vBody.GetValue<integer>('cod_produto_oficial',0),
-                                               vBody.GetValue<string>('dt_ult_sincronizacao','')
-                                              );
-      vJson.AddPair('cod_produto_local', TJSONNumber.Create(vBody.GetValue<integer>('cod_produto_local',0)));
+      vJson := vDmGlobal.fInserirEditarPedido(vCodUsuario,
+                                             vBody.GetValue<integer>('cod_pedido_local',0),
+                                             vBody.GetValue<integer>('cod_cliente',0),
+                                             vBody.GetValue<string>('tipo_pedido',''),
+                                             vBody.GetValue<string>('data_pedido',''),
+                                             vBody.GetValue<string>('contato',''),
+                                             vBody.GetValue<string>('obs',''),
+                                             vBody.GetValue<double>('valor_total',0),
+                                             vBody.GetValue<integer>('cod_cond_pagto',0),
+                                             vBody.GetValue<string>('prazo_entrega',''),
+                                             vBody.GetValue<string>('data_entrega',''),
+                                             vBody.GetValue<integer>('cod_pedido_oficial',0),
+                                             vBody.GetValue<string>('dt_ult_sincronizacao','')
+                                             );
+      vJson.AddPair('cod_pedido_local', TJSONNumber.Create(vBody.GetValue<integer>('cod_pedido_local',0)));
 
       Result := vJson.ToJSON;
       FreeAndNil(vJson);

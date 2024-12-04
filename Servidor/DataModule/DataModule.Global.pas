@@ -42,6 +42,11 @@ type
     procedure EditarFoto(pCodProduto: Integer; pFoto: TBitMap);
     function fListarFoto(pCodProduto: Integer): TMemoryStream;
     function fListarPedidos(pDtUltSinc: String; pPagina, pCodUsuario: Integer): TJSonArray;
+    function fInserirEditarPedido(pCodUsuario, pCodPedidoLocal, pCodCliente: Integer;
+                                        pTipoPedido, pDataPedido, pContato, pOBS: String;
+                                        pValorTotal: Double; pCodCondPgto: Integer;
+                                        pPrazoEntrega, pDataEntrega: String;
+                                        pCodPedidoOficial: Integer; pDtUltSincronizacao: String): TJSonObject;
 
     { Public declarations }
   end;
@@ -728,5 +733,81 @@ begin
 
   Result := pSQLQuery.ToJSONArray;
 end;
+
+function TDmGlobal.fInserirEditarPedido(pCodUsuario, pCodPedidoLocal, pCodCliente: Integer;
+                                        pTipoPedido, pDataPedido, pContato, pOBS: String;
+                                        pValorTotal: Double; pCodCondPgto: Integer;
+                                        pPrazoEntrega, pDataEntrega: String;
+                                        pCodPedidoOficial: Integer; pDtUltSincronizacao: String): TJSonObject;
+var
+  vSQLQuery: TFDQuery;
+begin
+  vSQLQuery := TFDQuery.Create(nil);
+  try
+    vSQLQuery.Connection := Conn;
+
+    vSQLQuery.Active := False;
+    vSQLQuery.SQL.Clear;
+
+    if pCodPedidoOficial = 0 then
+    begin
+      vSQLQuery.SQL.Text := ' INSERT INTO TAB_PEDIDO                                                     '+
+                            ' (COD_CLIENTE, COD_USUARIO, TIPO_PEDIDO, DATA_PEDIDO, CONTATO,              '+
+                            ' OBS, VALOR_TOTAL, COD_COND_PAGTO, PRAZO_ENTREGA, DATA_ENTREGA,             '+
+                            ' COD_PEDIDO_LOCAL, DATA_ULT_ALTERACAO)                                      '+
+                            ' VALUES (:COD_CLIENTE, :COD_USUARIO, :TIPO_PEDIDO, :DATA_PEDIDO, :CONTATO,  '+
+                            ' :OBS, :VALOR_TOTAL, :COD_COND_PAGTO, :PRAZO_ENTREGA, :DATA_ENTREGA,        '+
+                            ' :COD_PEDIDO_LOCAL, :DATA_ULT_ALTERACAO)                                    '+
+                            ' RETURNING COD_PEDIDO AS COD_PRODUTO_OFICIAL                                ';
+
+      vSQLQuery.ParamByName('COD_USUARIO').AsInteger       := pCodUsuario;
+    end
+    else
+    begin
+      vSQLQuery.SQL.Text := ' UPDATE TAB_PEDIDO                                                                                   '+
+                            ' SET COD_CLIENTE = :COD_CLIENTE, TIPO_PEDIDO = :TIPO_PEDIDO, DATA_PEDIDO = :DATA_PEDIDO,             '+
+                            ' CONTATO = :CONTATO, OBS = :OBS, VALOR_TOTAL = :VALOR_TOTAL, COD_COND_PAGTO = :COD_COND_PAGTO,       '+
+                            ' PRAZO_ENTREGA = :PRAZO_ENTREGA, DATA_ENTREGA = :DATA_ENTREGA, COD_PEDIDO_LOCAL = :COD_PEDIDO_LOCAL, '+
+                            ' DATA_ULT_ALTERACAO = :DATA_ULT_ALTERACAO                                                            '+
+                            ' WHERE COD_PEDIDO = :COD_PEDIDO                                                                      '+
+                            ' RETURNING COD_PEDIDO AS COD_PEDIDO_OFICIAL                                                          ';
+
+      vSQLQuery.ParamByName('COD_PEDIDO').AsInteger := pCodPedidoOficial;
+    end;
+
+    vSQLQuery.ParamByName('COD_CLIENTE').AsInteger      := pCodCliente;
+    vSQLQuery.ParamByName('TIPO_PEDIDO').AsString       := pTipoPedido;
+    vSQLQuery.ParamByName('DATA_PEDIDO').Value          := pDataPedido;
+    vSQLQuery.ParamByName('CONTATO').AsString           := pContato;
+    vSQLQuery.ParamByName('OBS').AsString               := pOBS;
+    vSQLQuery.ParamByName('VALOR_TOTAL').AsFloat        := pValorTotal;
+    vSQLQuery.ParamByName('COD_COND_PAGTO').AsInteger   := pCodCondPgto;
+    vSQLQuery.ParamByName('PRAZO_ENTREGA').AsString     := pPrazoEntrega;
+    vSQLQuery.ParamByName('COD_PEDIDO_LOCAL').AsInteger := pCodPedidoLocal;
+
+    if pDataEntrega <> '' then
+      vSQLQuery.ParamByName('DATA_ENTREGA').Value := pDataEntrega
+    else
+    begin
+      vSQLQuery.ParamByName('DATA_ENTREGA').DataType := ftString;
+      vSQLQuery.ParamByName('DATA_ENTREGA').Clear;
+    end;
+
+    vSQLQuery.ParamByName('DATA_ULT_ALTERACAO').Value := pDtUltSincronizacao;
+
+
+    vSQLQuery.Active := True;
+    Result           := vSQLQuery.ToJSONObject;
+
+    //Itens do pedido
+
+  finally
+    FreeAndNil(vSQLQuery);
+
+  end;
+
+end;
+
+
 
 end.
