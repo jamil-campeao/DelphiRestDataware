@@ -157,7 +157,7 @@ procedure TDMServices.ServerEventsEventsperfilReplyEventByType(
   const RequestType: TRequestType; var StatusCode: Integer;
   RequestHeader: TStringList);
 begin
-  //PUT /USUARIOS/PERFIL
+  //PUT/DELETE /USUARIOS/PERFIL
   Controllers.Usuario.RegistrarRotasPerfil(Params, Result, RequestType, StatusCode, RequestHeader);
 
 end;

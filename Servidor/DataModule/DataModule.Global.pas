@@ -48,6 +48,7 @@ type
                                         pPrazoEntrega, pDataEntrega: String;
                                         pCodPedidoOficial: Integer; pDtUltSincronizacao: String;
                                         pItens: TJSONArray): TJSonObject;
+    function fExcluirUsuario(pCodUsuario:Integer): TJSONObject;
 
     { Public declarations }
   end;
@@ -154,15 +155,16 @@ begin
     vSQLQuery.Active := False;
     vSQLQuery.SQL.Clear;
 
-    vSQLQuery.SQL.Text := ' INSERT INTO TAB_USUARIO ' +
-                          ' (NOME, EMAIL, SENHA)    ' +
-                          '  VALUES                 ' +
-                          ' (:NOME, :EMAIL, :SENHA) ' +
-                          ' RETURNING COD_USUARIO   ';
+    vSQLQuery.SQL.Text := ' INSERT INTO TAB_USUARIO                ' +
+                          ' (NOME, EMAIL, SENHA, IND_EXCLUIDO)     ' +
+                          '  VALUES                                ' +
+                          ' (:NOME, :EMAIL, :SENHA, :IND_EXCLUIDO) ' +
+                          ' RETURNING COD_USUARIO                  ';
 
-    vSQLQuery.ParamByName('NOME').AsString  := pNome;
-    vSQLQuery.ParamByName('EMAIL').AsString := pEmail;
-    vSQLQuery.ParamByName('SENHA').AsString := fSaltPassword(pSenha);
+    vSQLQuery.ParamByName('NOME').AsString         := pNome;
+    vSQLQuery.ParamByName('EMAIL').AsString        := pEmail;
+    vSQLQuery.ParamByName('IND_EXCLUIDO').AsString := 'N';
+    vSQLQuery.ParamByName('SENHA').AsString        := fSaltPassword(pSenha);
 
     vSQLQuery.Active := True;
 
@@ -847,6 +849,54 @@ begin
 
   finally
     FreeAndNil(vSQLQuery);
+  end;
+
+end;
+
+
+function TDmGlobal.fExcluirUsuario(pCodUsuario:Integer): TJSONObject;
+var
+  vSQLQuery: TFDQuery;
+begin
+  vSQLQuery := TFDQuery.Create(nil);
+  try
+    Conn.StartTransaction;
+    vSQLQuery.Connection := Conn;
+    try
+
+      vSQLQuery.Active := False;
+      vSQLQuery.SQL.Clear;
+
+      vSQLQuery.SQL.Text := ' UPDATE TAB_USUARIO                   ' +
+                            ' SET IND_EXCLUIDO = :IND_EXCLUIDO,    ' +
+                            ' EMAIL = :EMAIL, NOME = :NOME,        ' +
+                            ' TOKEN_PUSH = :TOKEN_PUSH,            ' +
+                            ' PLATAFORMA = :PLATAFORMA             ' +
+                            ' WHERE COD_USUARIO = :COD_USUARIO     ' +
+                            ' RETURNING COD_USUARIO AS COD_USUARIO ';
+
+      vSQLQuery.ParamByName('IND_EXCLUIDO').AsString := 'S';
+      vSQLQuery.ParamByName('EMAIL').AsString        := 'USUÁRIO EXCLUÍDO';
+      vSQLQuery.ParamByName('NOME').AsString         := 'USUÁRIO EXCLUÍDO';
+      vSQLQuery.ParamByName('TOKEN_PUSH').AsString   := '';
+      vSQLQuery.ParamByName('PLATAFORMA').AsString   := '';
+      vSQLQuery.ParamByName('COD_USUARIO').AsInteger := pCodUsuario;
+      vSQLQuery.Active := True;
+
+      Result := vSQLQuery.ToJSonObject;
+
+    except on e:Exception do
+      begin
+        Conn.Rollback;
+        raise Exception.Create('Erro ao excluir usuário: ' + e.Message);
+      end;
+
+    end;
+
+    Conn.Commit;
+  finally
+    FreeAndNil(vSQLQuery);
+
   end;
 
 end;

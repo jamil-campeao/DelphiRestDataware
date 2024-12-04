@@ -22,6 +22,10 @@ procedure InserirUsuario(var Params: TRESTDWParams; var Result: string;
   const RequestType: TRequestType; var StatusCode: Integer;
   RequestHeader: TStringList);
 
+procedure ExcluirUsuario(var Params: TRESTDWParams; var Result: string;
+  const RequestType: TRequestType; var StatusCode: Integer;
+  RequestHeader: TStringList);
+
 procedure Login(var Params: TRESTDWParams; var Result: string;
   const RequestType: TRequestType; var StatusCode: Integer;
   RequestHeader: TStringList);
@@ -85,7 +89,10 @@ procedure RegistrarRotasPerfil(var Params: TRESTDWParams; var Result: string;
   RequestHeader: TStringList);
 begin
   if RequestType = rtPut then
-    EditarUsuario(Params, Result, RequestType, StatusCode, RequestHeader);
+    EditarUsuario(Params, Result, RequestType, StatusCode, RequestHeader)
+  else
+  if RequestType = rtDelete then
+    ExcluirUsuario(Params, Result, RequestType, StatusCode, RequestHeader);
 end;
 
 procedure RegistrarRotasSenha(var Params: TRESTDWParams; var Result: string;
@@ -319,6 +326,50 @@ begin
   Result := FormatDateTime('yyyy-mm-dd hh:nn:ss', now);
   StatusCode := 200;
 end;
+
+procedure ExcluirUsuario(var Params: TRESTDWParams; var Result: string;
+  const RequestType: TRequestType; var StatusCode: Integer;
+  RequestHeader: TStringList);
+var
+  vCodUsuario      : Integer;
+  vCodUsuarioParam : Integer;
+  vDMGlobal        : TDmGlobal;
+  vJson            : TJSONObject;
+begin
+  try
+    try
+      vDMGlobal := TDMGlobal.Create(nil);
+      vCodUsuario := fGetUsuarioRequest();
+
+      try
+        vCodUsuarioParam := Params.ItemsString['0'].AsInteger;
+      except
+        vCodUsuarioParam := 0;
+      end;
+
+      if vCodUsuario <> vCodUsuarioParam then
+        raise Exception.Create('Operação não permitida');
+
+      vJson := vDmGlobal.fExcluirUsuario(vCodUsuario);
+
+      Result := vJson.ToJSON;
+      FreeAndNil(vJson);
+      StatusCode := 201;
+
+    except on e:Exception do
+      begin
+        StatusCode := 500;
+        Result := e.Message;
+      end;
+
+    end;
+
+  finally
+    FreeAndNil(vDMGlobal);
+
+  end;
+end;
+
 
 
 
